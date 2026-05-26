@@ -1,12 +1,22 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# IDE and editors
-.idea/
-.vscode/
+# ──────────────────────────────────────────────
+# Environment files — NEVER commit secrets
+# ──────────────────────────────────────────────
+.env
+.env.local
+.env.production
+.env.development
+.env*.local
+*.env
+*.env.*
+*token.json*
+*credentials.json*
 
+# ──────────────────────────────────────────────
 # Dependencies
+# ──────────────────────────────────────────────
 node_modules/
-/node_modules
 /.pnp
 .pnp.js
 .yarn/install-state.gz
@@ -16,54 +26,77 @@ node_modules/
 !.yarn/releases
 !.yarn/versions
 
-# Testing
-/coverage
-
+# ──────────────────────────────────────────────
 # Next.js
-/.next/
+# ──────────────────────────────────────────────
+.next/
 /out/
 next-env.d.ts
 *.tsbuildinfo
 
+# ──────────────────────────────────────────────
 # Production builds
+# ──────────────────────────────────────────────
 /build
 dist/
-dist
 
-# Environment files (comprehensive coverage)
-*token.json*
-*credentials.json*
+# ──────────────────────────────────────────────
+# Supabase local dev
+# ──────────────────────────────────────────────
+.supabase/
 
+# ──────────────────────────────────────────────
+# Testing
+# ──────────────────────────────────────────────
+/coverage
+
+# ──────────────────────────────────────────────
 # Logs and debug files
+# ──────────────────────────────────────────────
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 dump.rdb
 
+# ──────────────────────────────────────────────
 # System files
+# ──────────────────────────────────────────────
 .DS_Store
+Thumbs.db
 *.pem
 
+# ──────────────────────────────────────────────
+# IDE and editors
+# ──────────────────────────────────────────────
+.idea/
+.vscode/
+
+# ──────────────────────────────────────────────
 # Python
+# ──────────────────────────────────────────────
 __pycache__/
 *pyc*
 venv/
 .venv/
 
+# ──────────────────────────────────────────────
 # Development tools
+# ──────────────────────────────────────────────
 chainlit.md
 .chainlit
 .ipynb_checkpoints/
 .ac
 
+# ──────────────────────────────────────────────
 # Deployment
+# ──────────────────────────────────────────────
 .vercel
 
-# Data and databases
-agenthub/agents/youtube/db
-
+# ──────────────────────────────────────────────
 # Archive files and large assets
+# ──────────────────────────────────────────────
 **/*.zip
 **/*.tar.gz
 **/*.tar
@@ -72,48 +105,12 @@ agenthub/agents/youtube/db
 *.deb
 *.dylib
 
+# ──────────────────────────────────────────────
 # Build caches
+# ──────────────────────────────────────────────
 .cache/
 
+# ──────────────────────────────────────────────
+# Project-specific
+# ──────────────────────────────────────────────
 memory/test_credentials.md
-
-# Mobile development
-android-sdk/node_modules/@next/swc-linux-arm64-gnu/next-swc.linux-arm64-gnu.node
-node_modules/@next/swc-linux-arm64-musl/next-swc.linux-arm64-musl.node
-node_modules/@next/swc-linux-arm64-gnu/next-swc.linux-arm64-gnu.node
--e 
-# Environment files
-*.env
-*.env.*
-
-# dependencies
-node_modules/
-
-# next
-.next/
-out/
-
-# env
-.env
-.env.local
-.env.production
-
-# supabase
-.supabase/
-
-# logs
-*.log
-
-# OS
-.DS_Store
-Thumbs.db
-
-# IDE
-.vscode/
-.idea/
-
-# testing
-coverage/
-
-# build
-dist/

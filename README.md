@@ -143,13 +143,15 @@ yarn install
 
 ### 2. Environment Setup
 
-Your environment is already configured in `.env.local`:
+Create a `.env.local` file in the project root with your Supabase credentials:
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=https://pdubwhohyxcjhuemigne.supabase.co
+NEXT_PUBLIC_SUPABASE_URL=https://<your-project-ref>.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<your_anon_key>
 SUPABASE_SERVICE_ROLE_KEY=<your_service_role_key>
 ```
+
+> ⚠️ Get these values from your [Supabase Dashboard](https://app.supabase.com) → Project Settings → API.
 
 ### 3. Database Setup
 

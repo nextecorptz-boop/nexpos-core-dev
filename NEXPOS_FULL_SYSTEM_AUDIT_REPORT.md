@@ -186,7 +186,7 @@ No circular dependency cycles were confirmed via static analysis of the import g
 
 ## 6. Supabase Audit Summary
 
-**Project**: `pdubwhohyxcjhuemigne` | **Tables**: 30 | **RLS**: All enabled ✓ | **Migrations**: 2
+**Project**: `<project-ref>` | **Tables**: 30 | **RLS**: All enabled ✓ | **Migrations**: 2
 
 ### Auth & Access Control
 
