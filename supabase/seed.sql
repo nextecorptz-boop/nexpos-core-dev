@@ -37,18 +37,21 @@ VALUES
 -- Run: SELECT id, email FROM auth.users; after creating users in the dashboard.
 -- ─────────────────────────────────────────────────────────────────────────────
 
--- Placeholder UUIDs (replace with real values from auth.users in local dev)
--- Owner:   replace '00000000-0000-0000-0000-000000000001'
--- Manager: replace '00000000-0000-0000-0000-000000000002'
--- Cashier: replace '00000000-0000-0000-0000-000000000003'
+-- Real UUIDs from auth.users (verified 2026-05-26 via Supabase Dashboard)
+-- owner@nexpos.com   → 59bac885-f42d-4bee-9f3b-a15a3f6427c4
+-- manager@nexpos.com → e4f2083e-55e9-4ad2-925a-aa4b5d8d5dea
+-- cashier@nexpos.com → 2442aa5a-e4d7-409e-b91e-7addb5c2db21
+-- TODO: grace@nexpos.com  → replace '00000000-0000-0000-0000-000000000004' (not in auth.users yet)
+-- TODO: fatima@nexpos.com → replace '00000000-0000-0000-0000-000000000005' (not in auth.users yet)
 
 INSERT INTO public.profiles (id, tenant_id, branch_id, full_name, role, phone, is_active)
 VALUES
-  ('00000000-0000-0000-0000-000000000001', '01HZDEV00000000000000TENANT1', NULL,                          'James Kimani',  'owner',   '+255 712 111 001', true),
-  ('00000000-0000-0000-0000-000000000002', '01HZDEV00000000000000TENANT1', '01HZDEV00000000000000BRANCH1', 'Amina Hassan',  'manager', '+255 712 111 002', true),
-  ('00000000-0000-0000-0000-000000000003', '01HZDEV00000000000000TENANT1', '01HZDEV00000000000000BRANCH1', 'Peter Mwangi',  'cashier', '+255 712 111 003', true),
+  ('59bac885-f42d-4bee-9f3b-a15a3f6427c4', '01HZDEV00000000000000TENANT1', NULL,                          'James Kimani',  'owner',   '+255 712 111 001', true),
+  ('e4f2083e-55e9-4ad2-925a-aa4b5d8d5dea', '01HZDEV00000000000000TENANT1', '01HZDEV00000000000000BRANCH1', 'Amina Hassan',  'manager', '+255 712 111 002', true),
+  ('2442aa5a-e4d7-409e-b91e-7addb5c2db21', '01HZDEV00000000000000TENANT1', '01HZDEV00000000000000BRANCH1', 'Peter Mwangi',  'cashier', '+255 712 111 003', true),
+  -- TODO: Create grace@nexpos.com in auth.users, then replace the UUID below
   ('00000000-0000-0000-0000-000000000004', '01HZDEV00000000000000TENANT1', '01HZDEV00000000000000BRANCH2', 'Grace Odhiambo','cashier', '+255 712 111 004', true),
-  -- Tenant 2
+  -- Tenant 2 — TODO: Create fatima@nexpos.com in auth.users, then replace the UUID below
   ('00000000-0000-0000-0000-000000000005', '01HZDEV00000000000000TENANT2', NULL,                          'Fatima Said',   'owner',   '+255 777 222 001', true);
 
 
