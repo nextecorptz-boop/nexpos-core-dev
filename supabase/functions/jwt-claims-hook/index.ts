@@ -7,20 +7,20 @@
 //   Function: jwt-claims-hook
 //
 // This function runs on EVERY login and token refresh.
-// It injects tenant_id, role, and branch_id into app_metadata.
-// These claims are read by auth.current_tenant(), auth.current_role(),
-// auth.current_branch() — the foundation of all RLS policies.
+// It injects tenant_id, role, and branch_id into the JWT.
+// These claims are read by RLS helper functions like auth.current_tenant(),
+// auth.current_role(), and auth.current_branch().
 //
 // CRITICAL RULES:
 // 1. This function MUST be fast (< 500ms). It blocks login.
 // 2. NEVER throw unhandled errors — a crash here locks all users out.
 // 3. Read ONLY from profiles table. No other queries.
-// 4. Return the full event.claims object — Supabase merges, not replaces.
+// 4. Populate the 'custom_claims' object in the response.
 // =============================================================================
 
 import { createClient } from 'jsr:@supabase/supabase-js@2';
 
-// Type definitions — keep in sync with DB schema
+// Keep these types in sync with your DB schema and user object.
 interface ProfileRow {
   tenant_id: string;
   role: 'owner' | 'manager' | 'cashier' | 'viewer';
@@ -28,89 +28,107 @@ interface ProfileRow {
   is_active: boolean;
 }
 
-interface ClaimsHookEvent {
-  user_id: string;
-  claims: {
-    sub: string;
-    email?: string;
-    app_metadata: Record<string, unknown>;
-    user_metadata: Record<string, unknown>;
-    role: string;
-    aud: string;
-    iss: string;
-    iat: number;
-    exp: number;
-    [key: string]: unknown;
-  };
+interface User {
+  id: string;
+  aud: string;
+  role: string;
+  email?: string;
+  app_metadata: Record<string, unknown>;
+  user_metadata: Record<string, unknown>;
+  // ... other user properties
 }
 
-interface ClaimsHookResponse {
-  claims: ClaimsHookEvent['claims'];
+interface HookRequest {
+  user: User;
+}
+
+// The response must be in this format.
+interface HookResponse {
+  session: {
+    custom_claims: {
+      [key: string]: any;
+    };
+  };
 }
 
 Deno.serve(async (req: Request): Promise<Response> => {
-  // Supabase calls this endpoint directly. Method must be POST.
-  if (req.method !== 'POST') {
-    return new Response('Method Not Allowed', { status: 405 });
-  }
-
-  let event: ClaimsHookEvent;
-
+  // 1. Overall safety net to prevent locking users out
   try {
-    event = await req.json() as ClaimsHookEvent;
-  } catch {
-    return new Response('Invalid JSON body', { status: 400 });
-  }
-
-  if (!event?.user_id || !event?.claims) {
-    return new Response('Missing user_id or claims', { status: 400 });
-  }
-
-  // Use service_role client — this function runs server-side, outside RLS.
-  // The service_role key is safe here: this is a server-side Deno function,
-  // never exposed to clients.
-  const supabase = createClient(
-    Deno.env.get('SUPABASE_URL') ?? '',
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
-    {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-      },
+    if (req.method !== 'POST') {
+      return new Response('Method Not Allowed', { status: 405 });
     }
-  );
 
-  // Fetch the user's profile row.
-  // Single query. No JOINs. Indexed on id (PK).
-  // pin_hash excluded explicitly — never include in JWT.
-  const { data: profile, error } = await supabase
-    .from('profiles')
-    .select('tenant_id, role, branch_id, is_active')
-    .eq('id', event.user_id)
-    .single<ProfileRow>();
+    let hookRequest: HookRequest;
+    try {
+      hookRequest = await req.json();
+    } catch {
+      return new Response('Invalid JSON body', { status: 400 });
+    }
 
-  if (error) {
-    // Log but don't crash. Return minimal claims so the user can still log in
-    // but will have no tenant access (RLS will block everything).
-    // Ops monitors JWT claims errors in Sentry/logs.
-    console.error('[jwt-claims-hook] profile fetch error:', {
-      user_id: event.user_id,
-      error: error.message,
-      code: error.code,
-    });
+    const { user } = hookRequest;
+    if (!user?.id) {
+      return new Response('Received invalid user object', { status: 400 });
+    }
 
-    // Return claims without app_metadata enrichment.
-    // The user will see "access denied" on all queries — correct behavior
-    // when their profile row doesn't exist yet (unprovisioned user).
-    const response: ClaimsHookResponse = {
-      claims: {
-        ...event.claims,
-        app_metadata: {
-          ...event.claims.app_metadata,
-          // Explicitly clear any stale tenant claims
-          tenant_id: null,
-          role: null,
-          branch_id: null,
+    // 2. Use service_role client for server-side operations
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false,
+        },
+      }
+    );
+
+    // 3. Fetch user profile with a single, fast query
+    const { data: profile, error } = await supabase
+      .from('profiles')
+      .select('tenant_id, role, branch_id, is_active')
+      .eq('id', user.id)
+      .single<ProfileRow>();
+    
+    // Fallback claims for any error or non-standard user state
+    const fallbackClaims = {
+      tenant_id: null,
+      role: null,
+      branch_id: null,
+      is_active: false,
+    };
+    
+    // 4. Handle errors during profile fetch
+    if (error) {
+      console.error(`[jwt-claims-hook] DB error for user ${user.id}:`, error.message);
+      const response: HookResponse = { session: { custom_claims: fallbackClaims } };
+      return new Response(JSON.stringify(response), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // 5. Handle missing profile or deactivated user
+    if (!profile || !profile.is_active) {
+      if (!profile) {
+        console.warn(`[jwt-claims-hook] No profile found for user: ${user.id}`);
+      } else {
+        console.warn(`[jwt-claims-hook] Inactive user attempted login: ${user.id}`);
+      }
+      const response: HookResponse = { session: { custom_claims: fallbackClaims } };
+      return new Response(JSON.stringify(response), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // 6. Happy path: user is active and has a profile
+    const response: HookResponse = {
+      session: {
+        custom_claims: {
+          tenant_id: profile.tenant_id,
+          role: profile.role,
+          branch_id: profile.branch_id ?? null,
+          is_active: profile.is_active, // Include for client-side checks
         },
       },
     };
@@ -119,73 +137,24 @@ Deno.serve(async (req: Request): Promise<Response> => {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });
-  }
 
-  if (!profile) {
-    // User exists in auth.users but has no profile row.
-    // Normal state for freshly invited users before onboarding completes.
-    console.warn('[jwt-claims-hook] no profile found for user:', event.user_id);
-
-    const response: ClaimsHookResponse = {
-      claims: {
-        ...event.claims,
-        app_metadata: {
-          ...event.claims.app_metadata,
+  } catch (e) {
+    // 7. Final catch-all to guarantee a response
+    console.error('[jwt-claims-hook] CRITICAL Unhandled Exception:', e.message);
+    // Return a generic, empty claims response to prevent user lockout
+    const safeResponse: HookResponse = {
+      session: {
+        custom_claims: {
           tenant_id: null,
           role: null,
           branch_id: null,
+          is_active: false,
         },
       },
     };
-
-    return new Response(JSON.stringify(response), {
-      status: 200,
+    return new Response(JSON.stringify(safeResponse), {
+      status: 200, // Must be 200 to not block login
       headers: { 'Content-Type': 'application/json' },
     });
   }
-
-  // Deactivated users: inject claims but mark as inactive.
-  // RLS will block them because their profile won't match.
-  // Belt-and-suspenders: app layer checks is_active too.
-  if (!profile.is_active) {
-    console.warn('[jwt-claims-hook] inactive user attempted login:', event.user_id);
-
-    const response: ClaimsHookResponse = {
-      claims: {
-        ...event.claims,
-        app_metadata: {
-          ...event.claims.app_metadata,
-          tenant_id: null,
-          role: null,
-          branch_id: null,
-          deactivated: true,
-        },
-      },
-    };
-
-    return new Response(JSON.stringify(response), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
-
-  // Happy path: inject tenant claims into app_metadata.
-  // app_metadata is server-controlled. user_metadata is user-editable.
-  // NEVER read from user_metadata for authorization decisions.
-  const response: ClaimsHookResponse = {
-    claims: {
-      ...event.claims,
-      app_metadata: {
-        ...event.claims.app_metadata,
-        tenant_id: profile.tenant_id,
-        role: profile.role,
-        branch_id: profile.branch_id ?? null,
-      },
-    },
-  };
-
-  return new Response(JSON.stringify(response), {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' },
-  });
 });
