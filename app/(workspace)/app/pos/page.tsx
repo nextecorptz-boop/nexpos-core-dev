@@ -1,0 +1,462 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { createClient } from '@/lib/supabase/client'
+import { Search, Wifi, WifiOff } from 'lucide-react'
+import { CategoryBar, Category } from '@/components/workspace/pos/category-bar'
+import { ProductCard, Product } from '@/components/workspace/pos/product-card'
+import { VariantPanel } from '@/components/workspace/pos/variant-panel'
+import { OrderPanel } from '@/components/workspace/pos/order-panel'
+import { PaymentPanel } from '@/components/workspace/pos/payment-panel'
+import { SuccessState } from '@/components/workspace/pos/success-state'
+import { addToSyncQueue } from '@/lib/sync/sync-engine'
+import { db } from '@/lib/sync/db'
+import { toast } from 'sonner'
+
+interface CartItem {
+  variant_id: string
+  product_name: string
+  size: string
+  color: string | null
+  quantity: number
+  unit_price: number
+  cost_price: number
+  max_available: number // Checked at checkout
+}
+
+type CheckoutState = 'cart' | 'payment' | 'success'
+
+export default function POSPage() {
+  const supabase = createClient()
+  
+  // System State
+  const [isOnline, setIsOnline] = useState(true)
+  const [activeBranchId, setActiveBranchId] = useState<string>('')
+  const [activeTenantId, setActiveTenantId] = useState<string>('')
+  const [cashSessionId, setCashSessionId] = useState<string>('')
+  const [cashierId, setCashierId] = useState<string>('')
+  const [branchPrefix, setBranchPrefix] = useState<string>('NEXPOS')
+
+  // Data State
+  const [allProducts, setAllProducts] = useState<any[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
+  const [activeCategory, setActiveCategory] = useState<string>('all')
+  const [searchQuery, setSearchQuery] = useState('')
+  
+  // Interaction State
+  const [cart, setCart] = useState<CartItem[]>([])
+  const [selectedProduct, setSelectedProduct] = useState<any>(null)
+  const [loading, setLoading] = useState(false)
+  const [checkoutState, setCheckoutState] = useState<CheckoutState>('cart')
+
+  // Listen to online status
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    setIsOnline(navigator.onLine)
+    const handleOnline = () => setIsOnline(true)
+    const handleOffline = () => setIsOnline(false)
+    window.addEventListener('online', handleOnline)
+    window.addEventListener('offline', handleOffline)
+    return () => {
+      window.removeEventListener('online', handleOnline)
+      window.removeEventListener('offline', handleOffline)
+    }
+  }, [])
+
+  // 1. Fetch Auth & Profile details
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session?.user) {
+        setCashierId(session.user.id)
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('branch_id, tenant_id, branches(name)')
+          .eq('id', session.user.id)
+          .single()
+        
+        if (profile) {
+          setActiveBranchId(profile.branch_id || '')
+          setActiveTenantId(profile.tenant_id || '')
+          if (profile.branches && typeof (profile.branches as any).name === 'string') {
+            const name = (profile.branches as any).name
+            setBranchPrefix(name.slice(0, 4).toUpperCase())
+          }
+
+          // Fetch active cash session
+          const { data: sessionData } = await supabase
+            .from('cash_sessions')
+            .select('id')
+            .eq('branch_id', profile.branch_id)
+            .eq('status', 'open')
+            .maybeSingle()
+          
+          if (sessionData) {
+            setCashSessionId(sessionData.id)
+          }
+        }
+      }
+    }
+    fetchProfile()
+  }, [])
+
+  // 2. Fetch Catalog (Variants + Stock + Reservations)
+  const fetchCatalogData = async () => {
+    if (!activeBranchId || !activeTenantId) return
+
+    setLoading(true)
+    try {
+      if (isOnline) {
+        // --- ONLINE: Fetch categories, product families and compute availability from Supabase ---
+        const { data: cats } = await supabase
+          .from('product_categories')
+          .select('id, name')
+
+        const { data: prods } = await supabase
+          .from('product_families')
+          .select('id, name, brand, category_id, category:product_categories(name)')
+          .eq('is_active', true)
+          .eq('tenant_id', activeTenantId)
+
+        const { data: variants } = await supabase
+          .from('product_variants')
+          .select('*')
+          .eq('is_active', true)
+          .eq('tenant_id', activeTenantId)
+
+        const { data: stocks } = await supabase
+          .from('current_stock')
+          .select('variant_id, current_quantity')
+          .eq('branch_id', activeBranchId)
+
+        const { data: reservations } = await supabase
+          .from('inventory_reservations')
+          .select('variant_id, quantity')
+          .eq('branch_id', activeBranchId)
+
+        if (prods && variants) {
+          // Map availability onto variants
+          const mappedVariants = variants.map((v: any) => {
+            const stock = stocks?.find((s) => s.variant_id === v.id)
+            const currentStock = stock ? Number(stock.current_quantity) : 0
+            const reserved = reservations?.filter((r) => r.variant_id === v.id).reduce((sum, r) => sum + r.quantity, 0) || 0
+            return {
+              ...v,
+              current_qty: currentStock,
+              reserved_qty: reserved,
+              available_qty: Math.max(0, currentStock - reserved)
+            }
+          })
+
+          // Nest variants inside product families
+          const productsWithVariants = prods.map((p) => ({
+            ...p,
+            variants: mappedVariants.filter((v) => v.family_id === p.id)
+          }))
+
+          setAllProducts(productsWithVariants)
+
+          if (cats) {
+            setCategories(cats.map(c => ({
+              id: c.id,
+              name: c.name,
+              count: productsWithVariants.filter(p => p.category_id === c.id).length
+            })))
+          }
+        }
+      } else {
+        // --- OFFLINE: Fetch catalog from Dexie ---
+        const localVars = await db.variants.where('branch_id').equals(activeBranchId).toArray()
+        const localReservations = await db.reservations.where('branch_id').equals(activeBranchId).toArray()
+
+        // Extract categories and families locally
+        const categoriesMap: Record<string, string> = {}
+        const familiesMap: Record<string, any> = {}
+
+        localVars.forEach((v) => {
+          if (v.category_name) {
+            categoriesMap[v.category_name] = v.category_name
+          }
+          if (v.family_id) {
+            if (!familiesMap[v.family_id]) {
+              familiesMap[v.family_id] = {
+                id: v.family_id,
+                name: v.name.split(' (')[0], // Extract family name
+                brand: v.brand || 'Unbranded',
+                category_name: v.category_name || 'General',
+                variants: []
+              }
+            }
+            const resQty = localReservations
+              .filter((r) => r.variant_id === v.id)
+              .reduce((sum, r) => sum + r.quantity, 0)
+
+            familiesMap[v.family_id].variants.push({
+              id: v.id,
+              size: v.size,
+              color: v.color,
+              selling_price: v.price,
+              cost_price: v.cost_price,
+              current_qty: v.quantity,
+              reserved_qty: resQty,
+              available_qty: Math.max(0, v.quantity - resQty)
+            })
+          }
+        })
+
+        const computedProducts = Object.values(familiesMap)
+        setAllProducts(computedProducts)
+
+        const computedCats = Object.keys(categoriesMap).map((catName, idx) => ({
+          id: catName.toLowerCase().replace(/\s+/g, '-'),
+          name: catName,
+          count: computedProducts.filter((p: any) => p.category_name === catName).length
+        }))
+        setCategories(computedCats)
+      }
+    } catch (e) {
+      console.error('Failed to load POS catalog data', e)
+      toast.error('Imeshindwa kupakia orodha ya bidhaa (Failed loading catalog)')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Fetch when branch state changes
+  useEffect(() => {
+    fetchCatalogData()
+  }, [activeBranchId, isOnline])
+
+  // Derived Products (Filtering)
+  const displayedProducts = allProducts.filter(p => {
+    const categoryMatch = activeCategory === 'all' || 
+                          p.category_id === activeCategory || 
+                          p.category_name?.toLowerCase().replace(/\s+/g, '-') === activeCategory
+    const searchMatch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                         (p.brand && p.brand.toLowerCase().includes(searchQuery.toLowerCase()))
+    return categoryMatch && searchMatch
+  })
+
+  // Select family to open sizes drawer
+  const selectProduct = (product: any) => {
+    setSelectedProduct(product)
+  }
+
+  const addToCart = (variant: any, productName: string) => {
+    // 1. Calculate maximum available stock
+    const available = variant.available_qty ?? 0
+    const existing = cart.find(item => item.variant_id === variant.id)
+    const currentQtyInCart = existing ? existing.quantity : 0
+
+    // 2. Prevent adding if stock would go negative
+    if (currentQtyInCart + 1 > available) {
+      toast.error(`Bidhaa imekwisha! Unaweza kuongeza hadi pea ${available} pekee.`)
+      return
+    }
+
+    if (existing) {
+      setCart(cart.map(item => 
+        item.variant_id === variant.id 
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      ))
+    } else {
+      setCart([...cart, {
+        variant_id: variant.id,
+        product_name: productName,
+        size: variant.size,
+        color: variant.color,
+        quantity: 1,
+        unit_price: variant.selling_price || variant.price || 0,
+        cost_price: variant.cost_price || 0,
+        max_available: available
+      }])
+    }
+    
+    setSelectedProduct(null)
+  }
+
+  const updateQuantity = (variantId: string, delta: number) => {
+    setCart(cart.map(item => {
+      if (item.variant_id === variantId) {
+        const newQty = item.quantity + delta
+        if (newQty > item.max_available) {
+          toast.error(`Huwezi kuongeza zaidi ya kiwango cha akiba (${item.max_available} available)`)
+          return item
+        }
+        return { ...item, quantity: Math.max(1, newQty) }
+      }
+      return item
+    }))
+  }
+
+  const removeFromCart = (variantId: string) => {
+    setCart(cart.filter(item => item.variant_id !== variantId))
+  }
+
+  const subtotal = cart.reduce((sum, item) => sum + (item.quantity * item.unit_price), 0)
+
+  // Checkout Execution: Queueing the sale mutation to the offline sync engine
+  const handleProcessPayment = async (method: string, amountTendered: number) => {
+    setLoading(true)
+    try {
+      const generatedReceipt = `${branchPrefix}-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`
+
+      const salePayload = {
+        receipt_number: generatedReceipt,
+        total_amount: subtotal,
+        subtotal: subtotal,
+        discount_amount: 0,
+        amount_paid: amountTendered,
+        balance_due: Math.max(0, subtotal - amountTendered),
+        status: amountTendered >= subtotal ? 'completed' : 'partial',
+        customer_id: null,
+        notes: 'POS Checkout transaction',
+        branch_id: activeBranchId,
+        cashier_id: cashierId,
+        cash_session_id: cashSessionId || null,
+        sale_items: cart.map(item => ({
+          variant_id: item.variant_id,
+          quantity: item.quantity,
+          unit_price: item.unit_price,
+          subtotal: item.quantity * item.unit_price,
+          cost_price: item.cost_price
+        })),
+        payments: [{
+          payment_method: method,
+          amount: Math.min(subtotal, amountTendered),
+          reference_code: ''
+        }]
+      }
+
+      // Add to sync queue for offline operation
+      await addToSyncQueue('sale', salePayload, activeTenantId)
+
+      toast.success(`Malipo yamepokelewa! Stakabadhi: ${generatedReceipt}`)
+      setCheckoutState('success')
+    } catch (error: any) {
+      console.error('Checkout error:', error)
+      toast.error('Malipo yameshindwa kuhifadhiwa')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleCheckoutComplete = () => {
+    setCart([])
+    setCheckoutState('cart')
+    // Refresh catalog stock
+    fetchCatalogData()
+  }
+
+  return (
+    <div className="flex flex-col h-[calc(100vh-64px)] lg:h-[calc(100vh-80px)] overflow-hidden bg-nx-bg">
+      {/* 1. Session Bar with Sync observations */}
+      <div className="h-[48px] bg-nx-surface border-b border-nx-border px-6 flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-2 font-ui text-[13px] text-nx-text-sec">
+          <span className="font-semibold text-nx-text">Point of Sale (Duka)</span>
+          <span>•</span>
+          <span>Shift session: {cashSessionId ? 'Inayofanya kazi' : 'Hakuna Zamu'}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          {isOnline ? (
+            <span className="flex items-center gap-1.5 font-ui text-xs text-nx-green font-semibold bg-nx-green/10 px-2.5 py-1 rounded-full">
+              <Wifi className="w-3.5 h-3.5" /> Mtandao Upo (Online)
+            </span>
+          ) : (
+            <span className="flex items-center gap-1.5 font-ui text-xs text-nx-orange font-semibold bg-nx-orange/10 px-2.5 py-1 rounded-full">
+              <WifiOff className="w-3.5 h-3.5" /> Nje ya Mtandao (Offline)
+            </span>
+          )}
+        </div>
+      </div>
+
+      <div className="flex flex-1 overflow-hidden">
+        {/* Main Workspace (Left) */}
+        <div className="flex-1 flex flex-col min-w-0">
+          <div className="p-6 pb-0 flex flex-col h-full">
+            {/* 2. Category Bar */}
+            <CategoryBar 
+              categories={categories}
+              activeCategory={activeCategory}
+              onSelectCategory={setActiveCategory}
+            />
+
+            {/* Search Bar */}
+            <div className="relative mb-4 shrink-0">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-nx-text-muted" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Tafuta bidhaa kwa jina au SKU..."
+                className="w-full bg-nx-surface border border-nx-border text-nx-text font-ui text-[14px] pl-10 pr-4 py-3 rounded-nx-btn focus:outline-none focus:border-nx-cyan transition-colors"
+              />
+            </div>
+
+            {/* 3. Product Grid */}
+            <div className="flex-1 overflow-y-auto no-scrollbar pb-6">
+              {loading && allProducts.length === 0 ? (
+                <div className="h-full flex items-center justify-center text-nx-text-muted font-ui text-[14px] animate-pulse">
+                  Kupakia bidhaa...
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                  {displayedProducts.map(product => (
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      isSelected={selectedProduct?.id === product.id}
+                      onClick={selectProduct}
+                    />
+                  ))}
+                </div>
+              )}
+              
+              {!loading && displayedProducts.length === 0 && (
+                <div className="h-full flex items-center justify-center text-nx-text-muted font-ui text-[14px]">
+                  Hakuna bidhaa iliyopatikana.
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* 4. Variant Panel */}
+        <VariantPanel 
+          product={selectedProduct}
+          isOpen={!!selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+          onSelectVariant={(variant) => addToCart(variant, selectedProduct.name)}
+        />
+
+        {/* Checkout Panels (Right) */}
+        <div className="hidden md:block">
+          {checkoutState === 'cart' && (
+            <OrderPanel 
+              cart={cart}
+              onUpdateQuantity={updateQuantity}
+              onRemoveItem={removeFromCart}
+              onCharge={() => setCheckoutState('payment')}
+            />
+          )}
+
+          {checkoutState === 'payment' && (
+            <PaymentPanel
+              total={subtotal}
+              onBack={() => setCheckoutState('cart')}
+              onConfirm={handleProcessPayment}
+            />
+          )}
+
+          {checkoutState === 'success' && (
+            <SuccessState
+              total={subtotal}
+              onComplete={handleCheckoutComplete}
+            />
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
