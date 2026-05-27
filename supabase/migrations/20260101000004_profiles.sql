@@ -101,6 +101,46 @@ CREATE POLICY profiles_update_manager ON public.profiles
 -- No DELETE policy — profiles are deactivated, never deleted.
 -- Deleting a profile would orphan historical sales cashier_id references.
 
+-- ─────────────────────────────────────────────────────────────────────────────
+-- PRIVILEGE ESCALATION PREVENTION
+-- This trigger prevents a non-admin user from escalating their own privileges
+-- by modifying their role, tenant, or active status via the permissive
+-- 'profiles_update_own' RLS policy.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+CREATE OR REPLACE FUNCTION public.prevent_self_privilege_escalation()
+  RETURNS trigger
+  LANGUAGE plpgsql
+  SECURITY DEFINER
+  SET search_path = ''
+AS $$
+BEGIN
+  -- Check if the user is attempting to update their own profile
+  IF NEW.id = public.current_user_id() AND NOT public.has_role('owner', 'manager') THEN
+    -- Prevent changes to critical security fields
+    IF NEW.role != OLD.role THEN
+      RAISE EXCEPTION 'Only owners or managers can change a user''s role.';
+    END IF;
+    IF NEW.tenant_id != OLD.tenant_id THEN
+      RAISE EXCEPTION 'Cannot change your own tenant assignment.';
+    END IF;
+    IF NEW.branch_id IS DISTINCT FROM OLD.branch_id THEN
+      RAISE EXCEPTION 'Only owners or managers can change a user''s branch assignment.';
+    END IF;
+    IF NEW.is_active != OLD.is_active THEN
+      RAISE EXCEPTION 'Only owners or managers can deactivate or reactivate a user.';
+    END IF;
+  END IF;
+
+  -- Allow the update if no security rules were violated
+  RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER profiles_prevent_self_privilege_escalation
+  BEFORE UPDATE ON public.profiles
+  FOR EACH ROW EXECUTE FUNCTION public.prevent_self_privilege_escalation();
+
 COMMENT ON TABLE public.profiles IS
   'One row per auth.user. Role and tenant assignment owned by owner/manager. '
   'cashier role MUST have branch_id set. Deactivate with is_active=false.';

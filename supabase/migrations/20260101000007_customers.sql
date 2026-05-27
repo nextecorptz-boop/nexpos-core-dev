@@ -38,7 +38,7 @@ CREATE INDEX customers_fts_idx
   ON public.customers
   USING GIN (
     to_tsvector('simple',
-      unaccent(coalesce(full_name, '')) || ' ' || coalesce(phone, '')
+      public.f_unaccent(coalesce(full_name, '')) || ' ' || coalesce(phone, '')
     )
   );
 

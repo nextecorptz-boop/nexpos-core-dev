@@ -170,6 +170,43 @@ CREATE INDEX sale_lines_sale_idx
 CREATE INDEX sale_lines_variant_time_idx
   ON public.sale_lines (tenant_id, variant_id);
 
+-- ─────────────────────────────────────────────────────────────────────────────
+-- DENORMALIZATION ENFORCEMENT
+-- Ensures sale_lines.tenant_id always matches its parent sale's tenant_id.
+-- Runs on INSERT and UPDATE. Prevents data cross-contamination from a bug.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+CREATE OR REPLACE FUNCTION public.enforce_sale_line_tenant()
+  RETURNS trigger
+  LANGUAGE plpgsql
+  SECURITY DEFINER
+  SET search_path = ''
+AS $$
+DECLARE
+  v_sale_tenant public.ulid;
+BEGIN
+  SELECT tenant_id INTO v_sale_tenant
+  FROM public.sales
+  WHERE id = NEW.sale_id;
+
+  IF v_sale_tenant IS NULL THEN
+    RAISE EXCEPTION 'sale % does not exist', NEW.sale_id;
+  END IF;
+
+  IF NEW.tenant_id != v_sale_tenant THEN
+    RAISE EXCEPTION
+      'sale_line tenant_id % does not match sale tenant_id %',
+      NEW.tenant_id, v_sale_tenant;
+  END IF;
+
+  RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER sale_lines_enforce_tenant
+  BEFORE INSERT OR UPDATE OF sale_id, tenant_id ON public.sale_lines
+  FOR EACH ROW EXECUTE FUNCTION public.enforce_sale_line_tenant();
+
 ALTER TABLE public.sale_lines ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY sale_lines_select ON public.sale_lines

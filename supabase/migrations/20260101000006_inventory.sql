@@ -210,47 +210,23 @@ BEGIN
   v_movement_id := COALESCE(p_movement_id, public.generate_ulid());
 
   IF EXISTS (SELECT 1 FROM public.stock_movements WHERE id = v_movement_id) THEN
-    SELECT jsonb_build_object(
-      'movement_id', sm.id,
-      'on_hand', sl.on_hand,
-      'replayed', true
-    )
-    INTO STRICT v_new_on_hand  -- reuse variable for the return value below
-    FROM public.stock_movements sm
-    JOIN public.stock_levels sl ON (sl.branch_id = sm.branch_id AND sl.variant_id = sm.variant_id)
-    WHERE sm.id = v_movement_id;
-
+    -- Idempotency: movement already exists. Return a marker.
+    -- NOTE: We cannot safely return the original 'on_hand' as it may have changed again since.
+    -- The client should receive the 'replayed' flag and re-fetch current state if needed.
     RETURN jsonb_build_object(
       'movement_id', v_movement_id,
       'replayed', true
     );
   END IF;
 
-  -- Upsert stock_levels with row lock
-  INSERT INTO public.stock_levels (tenant_id, branch_id, variant_id, on_hand)
-    VALUES (v_tenant_id, p_branch_id, p_variant_id, GREATEST(0, p_delta))
+  -- Atomically upsert the stock level.
+  -- This is the single source of truth for stock changes outside of a sale.
+  INSERT INTO public.stock_levels (tenant_id, branch_id, variant_id, on_hand, updated_at)
+  VALUES (v_tenant_id, p_branch_id, p_variant_id, GREATEST(0, p_delta), now())
   ON CONFLICT (branch_id, variant_id) DO UPDATE
-    SET on_hand    = GREATEST(0, public.stock_levels.on_hand + EXCLUDED.on_hand
-                              + p_delta
-                              - GREATEST(0, p_delta)),
-        -- Simplified: handle both insert-path and update-path delta correctly
+    SET on_hand = GREATEST(0, public.stock_levels.on_hand + p_delta),
         updated_at = now()
   RETURNING on_hand INTO v_new_on_hand;
-
-  -- Recalculate properly (the above ON CONFLICT arithmetic is tricky)
-  -- Do it cleanly:
-  UPDATE public.stock_levels
-    SET on_hand    = GREATEST(0, on_hand + p_delta),
-        updated_at = now()
-  WHERE branch_id = p_branch_id AND variant_id = p_variant_id
-  RETURNING on_hand INTO v_new_on_hand;
-
-  -- If no row existed, create it
-  IF NOT FOUND THEN
-    INSERT INTO public.stock_levels (tenant_id, branch_id, variant_id, on_hand)
-      VALUES (v_tenant_id, p_branch_id, p_variant_id, GREATEST(0, p_delta))
-    RETURNING on_hand INTO v_new_on_hand;
-  END IF;
 
   -- Record the movement
   INSERT INTO public.stock_movements (
