@@ -54,22 +54,22 @@ ALTER TABLE public.customers ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY customers_select ON public.customers
   FOR SELECT
-  USING (tenant_id = auth.current_tenant());
+  USING (tenant_id = public.current_tenant());
 
 -- All POS-facing roles can create customers (cashier adds new customer at checkout).
 CREATE POLICY customers_insert ON public.customers
   FOR INSERT
   WITH CHECK (
-    tenant_id = auth.current_tenant()
-    AND auth.has_role('owner', 'manager', 'cashier')
+    tenant_id = public.current_tenant()
+    AND public.has_role('owner', 'manager', 'cashier')
   );
 
 CREATE POLICY customers_update ON public.customers
   FOR UPDATE
-  USING (tenant_id = auth.current_tenant())
+  USING (tenant_id = public.current_tenant())
   WITH CHECK (
-    tenant_id = auth.current_tenant()
-    AND auth.has_role('owner', 'manager', 'cashier')
+    tenant_id = public.current_tenant()
+    AND public.has_role('owner', 'manager', 'cashier')
   );
 
 COMMENT ON TABLE public.customers IS

@@ -45,15 +45,15 @@ ALTER TABLE public.stock_levels ENABLE ROW LEVEL SECURITY;
 -- All roles can read stock (cashiers need it for availability display).
 CREATE POLICY stock_levels_select ON public.stock_levels
   FOR SELECT
-  USING (tenant_id = auth.current_tenant());
+  USING (tenant_id = public.current_tenant());
 
 -- Direct INSERT allowed for managers creating initial stock records.
 -- Updates go through the adjust_stock() function (SECURITY DEFINER).
 CREATE POLICY stock_levels_insert ON public.stock_levels
   FOR INSERT
   WITH CHECK (
-    tenant_id = auth.current_tenant()
-    AND auth.has_role('owner', 'manager')
+    tenant_id = public.current_tenant()
+    AND public.has_role('owner', 'manager')
   );
 
 -- No direct UPDATE policy. All stock changes go through
@@ -130,7 +130,7 @@ ALTER TABLE public.stock_movements ENABLE ROW LEVEL SECURITY;
 -- All roles read movement history.
 CREATE POLICY stock_movements_select ON public.stock_movements
   FOR SELECT
-  USING (tenant_id = auth.current_tenant());
+  USING (tenant_id = public.current_tenant());
 
 -- No direct INSERT policy.
 -- All inserts happen via adjust_stock() and complete_sale() SECURITY DEFINER functions.
@@ -168,14 +168,14 @@ DECLARE
   v_new_on_hand integer;
 BEGIN
   -- Auth checks
-  v_tenant_id := auth.current_tenant();
-  v_actor_id  := auth.uid();
+  v_tenant_id := public.current_tenant();
+  v_actor_id  := public.current_user_id();
 
   IF v_tenant_id IS NULL THEN
     RAISE EXCEPTION 'adjust_stock: unauthenticated' USING ERRCODE = '28000';
   END IF;
 
-  IF NOT auth.has_role('owner', 'manager') THEN
+  IF NOT public.has_role('owner', 'manager') THEN
     RAISE EXCEPTION 'adjust_stock: requires owner or manager role' USING ERRCODE = '42501';
   END IF;
 

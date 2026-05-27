@@ -109,7 +109,7 @@ ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
 -- Read: all roles in tenant
 CREATE POLICY sales_select ON public.sales
   FOR SELECT
-  USING (tenant_id = auth.current_tenant());
+  USING (tenant_id = public.current_tenant());
 
 -- No direct INSERT policy. All inserts go through complete_sale() SECURITY DEFINER.
 -- This enforces atomicity: no sale without corresponding sale_lines and stock_movements.
@@ -174,7 +174,7 @@ ALTER TABLE public.sale_lines ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY sale_lines_select ON public.sale_lines
   FOR SELECT
-  USING (tenant_id = auth.current_tenant());
+  USING (tenant_id = public.current_tenant());
 
 -- No direct INSERT policy. All inserts via complete_sale() SECURITY DEFINER.
 

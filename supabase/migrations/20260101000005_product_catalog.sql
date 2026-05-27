@@ -43,7 +43,7 @@ CREATE INDEX product_families_fts_idx
   ON public.product_families
   USING GIN (
     to_tsvector('simple',
-      unaccent(coalesce(name, '')) || ' ' || unaccent(coalesce(brand, ''))
+      public.f_unaccent(coalesce(name, '')) || ' ' || public.f_unaccent(coalesce(brand, ''))
     )
   );
 
@@ -60,29 +60,29 @@ ALTER TABLE public.product_families ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY product_families_select ON public.product_families
   FOR SELECT
-  USING (tenant_id = auth.current_tenant() AND is_active = true);
+  USING (tenant_id = public.current_tenant() AND is_active = true);
 
 -- Owners and managers see inactive products too (for catalog management)
 CREATE POLICY product_families_select_all ON public.product_families
   FOR SELECT
   USING (
-    tenant_id = auth.current_tenant()
-    AND auth.has_role('owner', 'manager')
+    tenant_id = public.current_tenant()
+    AND public.has_role('owner', 'manager')
   );
 
 CREATE POLICY product_families_insert ON public.product_families
   FOR INSERT
   WITH CHECK (
-    tenant_id = auth.current_tenant()
-    AND auth.has_role('owner', 'manager')
+    tenant_id = public.current_tenant()
+    AND public.has_role('owner', 'manager')
   );
 
 CREATE POLICY product_families_update ON public.product_families
   FOR UPDATE
-  USING (tenant_id = auth.current_tenant())
+  USING (tenant_id = public.current_tenant())
   WITH CHECK (
-    tenant_id = auth.current_tenant()
-    AND auth.has_role('owner', 'manager')
+    tenant_id = public.current_tenant()
+    AND public.has_role('owner', 'manager')
   );
 
 COMMENT ON TABLE public.product_families IS
@@ -175,28 +175,28 @@ ALTER TABLE public.product_variants ENABLE ROW LEVEL SECURITY;
 -- Cashiers see only active variants; managers see all.
 CREATE POLICY product_variants_select_active ON public.product_variants
   FOR SELECT
-  USING (tenant_id = auth.current_tenant() AND is_active = true);
+  USING (tenant_id = public.current_tenant() AND is_active = true);
 
 CREATE POLICY product_variants_select_all ON public.product_variants
   FOR SELECT
   USING (
-    tenant_id = auth.current_tenant()
-    AND auth.has_role('owner', 'manager')
+    tenant_id = public.current_tenant()
+    AND public.has_role('owner', 'manager')
   );
 
 CREATE POLICY product_variants_insert ON public.product_variants
   FOR INSERT
   WITH CHECK (
-    tenant_id = auth.current_tenant()
-    AND auth.has_role('owner', 'manager')
+    tenant_id = public.current_tenant()
+    AND public.has_role('owner', 'manager')
   );
 
 CREATE POLICY product_variants_update ON public.product_variants
   FOR UPDATE
-  USING (tenant_id = auth.current_tenant())
+  USING (tenant_id = public.current_tenant())
   WITH CHECK (
-    tenant_id = auth.current_tenant()
-    AND auth.has_role('owner', 'manager')
+    tenant_id = public.current_tenant()
+    AND public.has_role('owner', 'manager')
   );
 
 COMMENT ON TABLE public.product_variants IS

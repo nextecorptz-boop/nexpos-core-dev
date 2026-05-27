@@ -68,16 +68,16 @@ CREATE POLICY profiles_select_own ON public.profiles
 CREATE POLICY profiles_select_tenant ON public.profiles
   FOR SELECT
   USING (
-    tenant_id = auth.current_tenant()
-    AND auth.has_role('owner', 'manager')
+    tenant_id = public.current_tenant()
+    AND public.has_role('owner', 'manager')
   );
 
 -- Only owner can create new profiles (add staff).
 CREATE POLICY profiles_insert ON public.profiles
   FOR INSERT
   WITH CHECK (
-    tenant_id = auth.current_tenant()
-    AND auth.has_role('owner', 'manager')
+    tenant_id = public.current_tenant()
+    AND public.has_role('owner', 'manager')
   );
 
 -- Owner/manager can update any profile in their tenant.
@@ -90,12 +90,12 @@ CREATE POLICY profiles_update_own ON public.profiles
 CREATE POLICY profiles_update_manager ON public.profiles
   FOR UPDATE
   USING (
-    tenant_id = auth.current_tenant()
-    AND auth.has_role('owner', 'manager')
+    tenant_id = public.current_tenant()
+    AND public.has_role('owner', 'manager')
   )
   WITH CHECK (
-    tenant_id = auth.current_tenant()
-    AND auth.has_role('owner', 'manager')
+    tenant_id = public.current_tenant()
+    AND public.has_role('owner', 'manager')
   );
 
 -- No DELETE policy — profiles are deactivated, never deleted.

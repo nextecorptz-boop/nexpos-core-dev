@@ -55,7 +55,7 @@ ALTER TABLE public.tenants ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY tenants_select ON public.tenants
   FOR SELECT
-  USING (id = auth.current_tenant());
+  USING (id = public.current_tenant());
 
 -- No INSERT/UPDATE/DELETE policies — blocked by default.
 -- Tenant provisioning happens via the admin Edge Function (service_role).
@@ -98,22 +98,22 @@ ALTER TABLE public.branches ENABLE ROW LEVEL SECURITY;
 -- All authenticated users in a tenant can see branches.
 CREATE POLICY branches_select ON public.branches
   FOR SELECT
-  USING (tenant_id = auth.current_tenant());
+  USING (tenant_id = public.current_tenant());
 
 -- Only owner and manager can create/edit branches.
 CREATE POLICY branches_insert ON public.branches
   FOR INSERT
   WITH CHECK (
-    tenant_id = auth.current_tenant()
-    AND auth.has_role('owner', 'manager')
+    tenant_id = public.current_tenant()
+    AND public.has_role('owner', 'manager')
   );
 
 CREATE POLICY branches_update ON public.branches
   FOR UPDATE
-  USING (tenant_id = auth.current_tenant())
+  USING (tenant_id = public.current_tenant())
   WITH CHECK (
-    tenant_id = auth.current_tenant()
-    AND auth.has_role('owner', 'manager')
+    tenant_id = public.current_tenant()
+    AND public.has_role('owner', 'manager')
   );
 
 -- No DELETE policy — branches are deactivated, never deleted.

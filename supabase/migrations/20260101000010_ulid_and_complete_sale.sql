@@ -141,16 +141,16 @@ BEGIN
   -- STEP 1: AUTH VALIDATION
   -- ─────────────────────────────────────────────────────────────────────────
 
-  v_tenant_id := auth.current_tenant();
-  v_actor_id  := auth.uid();
+  v_tenant_id := public.current_tenant();
+  v_actor_id  := public.current_user_id();
 
   IF v_tenant_id IS NULL THEN
     RAISE EXCEPTION 'complete_sale: unauthenticated'
       USING ERRCODE = '28000';
   END IF;
 
-  IF NOT auth.has_role('owner', 'manager', 'cashier') THEN
-    RAISE EXCEPTION 'complete_sale: role % cannot create sales', auth.current_role()
+  IF NOT public.has_role('owner', 'manager', 'cashier') THEN
+    RAISE EXCEPTION 'complete_sale: role % cannot create sales', public.current_role()
       USING ERRCODE = '42501';
   END IF;
 
@@ -232,7 +232,7 @@ BEGIN
   END IF;
 
   -- Cashiers can only sell in their assigned branch
-  IF auth.current_role() = 'cashier' AND auth.current_branch() != v_branch_id THEN
+  IF public.current_role() = 'cashier' AND public.current_branch() != v_branch_id THEN
     RAISE EXCEPTION 'complete_sale: cashier not assigned to branch %', v_branch_id
       USING ERRCODE = '42501';
   END IF;
