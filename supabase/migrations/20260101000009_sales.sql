@@ -15,7 +15,7 @@
 -- Generated inside complete_sale() SECURITY DEFINER — clients never call this directly.
 -- ─────────────────────────────────────────────────────────────────────────────
 
-CREATE SEQUENCE public.receipt_seq
+CREATE SEQUENCE IF NOT EXISTS public.receipt_seq
   START 1
   INCREMENT 1
   NO CYCLE;

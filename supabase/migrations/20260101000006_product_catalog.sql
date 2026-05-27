@@ -50,7 +50,7 @@ CREATE INDEX product_families_fts_idx
 -- Trigram index for fast ILIKE search (partial string matching)
 CREATE INDEX product_families_name_trgm_idx
   ON public.product_families
-  USING GIN (name gin_trgm_ops);
+  USING GIN (name extensions.gin_trgm_ops);
 
 CREATE TRIGGER product_families_updated_at
   BEFORE UPDATE ON public.product_families

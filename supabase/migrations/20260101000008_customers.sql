@@ -44,7 +44,7 @@ CREATE INDEX customers_fts_idx
 
 CREATE INDEX customers_name_trgm_idx
   ON public.customers
-  USING GIN (full_name gin_trgm_ops);
+  USING GIN (full_name extensions.gin_trgm_ops);
 
 CREATE TRIGGER customers_updated_at
   BEFORE UPDATE ON public.customers
