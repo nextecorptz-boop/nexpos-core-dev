@@ -162,10 +162,12 @@ CREATE OR REPLACE FUNCTION public.adjust_stock(
   SET search_path = ''
 AS $$
 DECLARE
-  v_tenant_id   public.ulid;
-  v_actor_id    uuid;
-  v_movement_id public.ulid;
-  v_new_on_hand integer;
+  v_tenant_id     public.ulid;
+  v_actor_id      uuid;
+  v_movement_id   public.ulid;
+  v_current_stock integer;
+  v_new_on_hand   integer;
+  v_actual_delta  integer;
 BEGIN
   -- Auth checks
   v_tenant_id := public.current_tenant();
@@ -219,28 +221,44 @@ BEGIN
     );
   END IF;
 
-  -- Atomically upsert the stock level.
-  -- This is the single source of truth for stock changes outside of a sale.
+  -- Ensure row exists safely for concurrent transactions
   INSERT INTO public.stock_levels (tenant_id, branch_id, variant_id, on_hand, updated_at)
-  VALUES (v_tenant_id, p_branch_id, p_variant_id, GREATEST(0, p_delta), now())
-  ON CONFLICT (branch_id, variant_id) DO UPDATE
-    SET on_hand = GREATEST(0, public.stock_levels.on_hand + p_delta),
-        updated_at = now()
-  RETURNING on_hand INTO v_new_on_hand;
+  VALUES (v_tenant_id, p_branch_id, p_variant_id, 0, now())
+  ON CONFLICT (branch_id, variant_id) DO NOTHING;
 
-  -- Record the movement
+  -- Lock the row and read current stock
+  SELECT on_hand INTO v_current_stock
+  FROM public.stock_levels
+  WHERE branch_id = p_branch_id AND variant_id = p_variant_id
+  FOR UPDATE;
+
+  -- Calculate true bounded stock and the actual delta applied
+  v_new_on_hand  := GREATEST(0, v_current_stock + p_delta);
+  v_actual_delta := v_new_on_hand - v_current_stock;
+
+  IF v_actual_delta = 0 AND p_delta != 0 THEN
+    RAISE EXCEPTION 'adjust_stock: cannot reduce stock below zero (current stock: %)', v_current_stock USING ERRCODE = '22023';
+  END IF;
+
+  -- Update the stock level with the exact calculated value
+  UPDATE public.stock_levels
+  SET on_hand = v_new_on_hand,
+      updated_at = now()
+  WHERE branch_id = p_branch_id AND variant_id = p_variant_id;
+
+  -- Record the movement using the actual delta
   INSERT INTO public.stock_movements (
     id, tenant_id, branch_id, variant_id,
     delta, reason, reference_type, note, actor_id
   ) VALUES (
     v_movement_id, v_tenant_id, p_branch_id, p_variant_id,
-    p_delta, p_reason, 'manual', p_note, v_actor_id
+    v_actual_delta, p_reason, 'manual', p_note, v_actor_id
   );
 
   RETURN jsonb_build_object(
     'movement_id', v_movement_id,
     'on_hand',     v_new_on_hand,
-    'delta',       p_delta,
+    'delta',       v_actual_delta,
     'replayed',    false
   );
 END;

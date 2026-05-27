@@ -77,6 +77,13 @@ CREATE OR REPLACE FUNCTION public.write_audit_log(
   SET search_path = ''
 AS $$
 BEGIN
+  -- Prevent forged identities: if called by an authenticated client,
+  -- always enforce the actual session context.
+  IF current_setting('request.jwt.claims', true) IS NOT NULL AND public.current_tenant() IS NOT NULL THEN
+    p_tenant_id := public.current_tenant();
+    p_actor_id  := public.current_user_id();
+  END IF;
+
   INSERT INTO audit.activity_log (
     tenant_id, actor_id, action, entity_type, entity_id, metadata, ip_address
   ) VALUES (
@@ -90,11 +97,13 @@ EXCEPTION WHEN OTHERS THEN
 END;
 $$;
 
--- Grant to authenticated so SECURITY DEFINER functions called by authenticated
--- users can invoke write_audit_log internally.
-GRANT EXECUTE ON FUNCTION public.write_audit_log TO authenticated;
+-- Revoke all direct client execution. SECURITY DEFINER functions (like complete_sale) 
+-- run as the owner and can still call this internally.
+REVOKE EXECUTE ON FUNCTION public.write_audit_log FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.write_audit_log FROM anon;
+REVOKE EXECUTE ON FUNCTION public.write_audit_log FROM authenticated;
 
 COMMENT ON FUNCTION public.write_audit_log IS
   'SECURITY DEFINER: writes to audit.activity_log. '
   'Exceptions are swallowed — audit failures never abort business transactions. '
-  'Call from inside complete_sale(), adjust_stock(), etc.';
+  'Cannot be called directly by clients. Call from inside complete_sale(), etc.';

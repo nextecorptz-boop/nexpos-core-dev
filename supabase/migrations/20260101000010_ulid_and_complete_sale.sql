@@ -296,9 +296,10 @@ BEGIN
     v_subtotal   := v_subtotal + v_line_total;
   END LOOP;
 
-  v_subtotal   := v_subtotal - v_order_discount;
-  v_vat_amount := round(v_subtotal * v_vat_rate, 2);
-  v_total      := v_subtotal + v_vat_amount;
+  -- v_subtotal remains the gross subtotal to satisfy sales_total_integrity:
+  -- total = subtotal + vat_amount - discount_amount
+  v_vat_amount := round(GREATEST(0, v_subtotal - v_order_discount) * v_vat_rate, 2);
+  v_total      := GREATEST(0, v_subtotal - v_order_discount) + v_vat_amount;
 
   IF v_total < 0 THEN
     RAISE EXCEPTION 'complete_sale: computed total is negative (discount exceeds subtotal)'

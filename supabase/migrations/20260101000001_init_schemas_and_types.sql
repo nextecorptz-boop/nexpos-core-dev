@@ -5,10 +5,11 @@
 -- =============================================================================
 
 -- Extensions (idempotent)
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-CREATE EXTENSION IF NOT EXISTS "pg_trgm";   -- trigram index support for ILIKE search
-CREATE EXTENSION IF NOT EXISTS "unaccent";  -- accent-insensitive full-text (Swahili names)
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";  -- for generate_ulid()
+CREATE SCHEMA IF NOT EXISTS extensions;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA extensions;
+CREATE EXTENSION IF NOT EXISTS "pg_trgm" WITH SCHEMA extensions;   -- trigram index support for ILIKE search
+CREATE EXTENSION IF NOT EXISTS "unaccent" WITH SCHEMA extensions;  -- accent-insensitive full-text (Swahili names)
+CREATE EXTENSION IF NOT EXISTS "pgcrypto" WITH SCHEMA extensions;  -- for generate_ulid()
 
 -- Audit schema — append-only, no RLS, accessed only by SECURITY DEFINER functions
 CREATE SCHEMA IF NOT EXISTS audit;

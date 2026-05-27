@@ -98,6 +98,21 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public
 ALTER DEFAULT PRIVILEGES IN SCHEMA public
   GRANT EXECUTE ON FUNCTIONS TO authenticated;
 
+-- Explicitly revoke from PUBLIC and anon for ALL existing functions created so far
+REVOKE EXECUTE ON FUNCTION public.f_unaccent(text) FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.current_tenant() FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.current_role() FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.current_branch() FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.current_user_id() FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.has_role(text[]) FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.set_updated_at() FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.enforce_variant_tenant() FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.adjust_stock(public.ulid, public.ulid, integer, text, text, public.ulid) FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.generate_ulid() FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.complete_sale(jsonb) FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.prevent_self_privilege_escalation() FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.enforce_sale_line_tenant() FROM PUBLIC, anon;
+
 COMMENT ON SCHEMA public IS
   'NEXPOS application schema. '
   'All tables have RLS enabled. '
