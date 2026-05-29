@@ -6,36 +6,43 @@
 
 @layer base {
   :root {
-    /* Map default Shadcn variables to NEXPOS Light Premium Retail color parameters */
-    --background: 210 20% 98%;        /* #F5F7FA (nx-bg) */
-    --foreground: 222 47% 11%;        /* #0F172A (nx-text) */
-    --card: 0 0% 100%;                /* #FFFFFF (nx-surface) */
-    --card-foreground: 222 47% 11%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    /* NEXPOS Dark Premium — canonical dark SaaS token layer */
+    --background: 228 49% 8%;         /* #0B1020 (nx-bg) */
+    --foreground: 210 33% 95%;        /* #F0F4F8 (nx-text) */
+    --card: 222 47% 11%;              /* #111827 (nx-surface) */
+    --card-foreground: 210 33% 95%;
+    --popover: 224 42% 16%;           /* #1A2236 (nx-elevated) */
+    --popover-foreground: 210 33% 95%;
     --primary: 189 94% 43%;           /* #06B6D4 (nx-cyan) */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 210 40% 98%;         /* #F8FAFC (nx-elevated) */
-    --secondary-foreground: 222 47% 11%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215 16% 47%;  /* #64748B (nx-text-muted) */
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222 47% 11%;
+    --primary-foreground: 228 49% 8%; /* dark bg on primary */
+    --secondary: 224 42% 16%;         /* #1A2236 (nx-elevated) */
+    --secondary-foreground: 210 33% 95%;
+    --muted: 222 27% 22%;             /* #2A3448 (nx-border) */
+    --muted-foreground: 215 20% 65%;  /* #94A3B8 (nx-text-sec) */
+    --accent: 224 42% 16%;            /* #1A2236 */
+    --accent-foreground: 189 94% 43%; /* cyan on accent */
     --destructive: 0 84.2% 60.2%;     /* #EF4444 */
-    --destructive-foreground: 0 0% 100%;
-    --border: 214 32% 89%;            /* #D9E2EC (nx-border) */
-    --input: 214 32% 89%;
-    --ring: 189 94% 43%;
+    --destructive-foreground: 210 33% 95%;
+    --border: 222 27% 22%;            /* #2A3448 (nx-border) */
+    --input: 222 27% 22%;
+    --ring: 189 94% 43%;              /* #06B6D4 */
     --radius: 0.75rem;                /* 12px */
-    
+
+    /* Chart colors */
+    --chart-1: 189 94% 43%;           /* cyan */
+    --chart-2: 45 87% 55%;            /* gold */
+    --chart-3: 160 70% 45%;           /* green */
+    --chart-4: 0 84% 60%;             /* red */
+    --chart-5: 38 92% 50%;            /* orange */
+
     /* Sidebar tokens */
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 222 47% 11%;
+    --sidebar-background: 222 47% 11%;  /* #111827 (nx-surface) */
+    --sidebar-foreground: 210 33% 95%;
     --sidebar-primary: 189 94% 43%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 40% 98%;
-    --sidebar-accent-foreground: 222 47% 11%;
-    --sidebar-border: 214 32% 89%;
+    --sidebar-primary-foreground: 228 49% 8%;
+    --sidebar-accent: 224 42% 16%;      /* #1A2236 (nx-elevated) */
+    --sidebar-accent-foreground: 210 33% 95%;
+    --sidebar-border: 222 27% 22%;      /* #2A3448 */
     --sidebar-ring: 189 94% 43%;
   }
 }
@@ -113,39 +120,15 @@
     text-wrap: balance;
   }
 
-  /* ── NEXPOS PUBLIC DARK LAYER — Nextec design tokens ── */
-
-  /* Sharp geometry helpers (zero radius) */
+  /* Sharp geometry (zero radius) — public pages only */
   .sharp { border-radius: 0 !important; }
 
-  /* Cyan glow utility */
+  /* Subtle surface glow — use sparingly for primary actions */
   .glow-cyan {
-    box-shadow: 0 0 32px 0 rgba(0, 201, 228, 0.12);
+    box-shadow: 0 0 24px 0 rgba(6, 182, 212, 0.15);
   }
 
-  /* Gold glow utility */
   .glow-gold {
-    box-shadow: 0 0 32px 0 rgba(201, 168, 76, 0.12);
-  }
-
-  /* Scan-line animation for decorative data panels */
-  @keyframes scan-line {
-    0%   { transform: translateY(-100%); opacity: 0; }
-    10%  { opacity: 0.08; }
-    90%  { opacity: 0.08; }
-    100% { transform: translateY(100vh); opacity: 0; }
-  }
-
-  .animate-scan {
-    animation: scan-line 3.5s linear infinite;
-  }
-
-  /* Blink caret for terminal decoration */
-  @keyframes blink {
-    0%, 49% { opacity: 1; }
-    50%, 100% { opacity: 0; }
-  }
-  .animate-blink {
-    animation: blink 1s step-end infinite;
+    box-shadow: 0 0 24px 0 rgba(201, 168, 76, 0.12);
   }
 }

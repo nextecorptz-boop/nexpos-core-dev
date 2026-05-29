@@ -298,11 +298,11 @@ export default function TransfersPage() {
       {/* Header Area */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-nx-border pb-5">
         <div>
-          <h1 className="font-ui text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <ArrowRightLeft className="w-7 h-7 text-cyan-600" />
+          <h1 className="font-ui text-2xl font-bold text-nx-text flex items-center gap-2">
+            <ArrowRightLeft className="w-7 h-7 text-nx-cyan" />
             Uhamisho wa Bidhaa (Inter-Branch Transfers)
           </h1>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-nx-text-muted mt-1">
             Usimamizi na uhamisho wa stoki kati ya maduka mbalimbali kwa usalama na bila makosa ya hesabu.
           </p>
         </div>
@@ -312,7 +312,7 @@ export default function TransfersPage() {
               setFromBranchId(userProfile?.branch_id || '')
               setIsCreateOpen(true)
             }}
-            className="flex items-center justify-center gap-2 py-2.5 px-4 bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-semibold rounded-xl shadow-sm transition-all"
+            className="flex items-center justify-center gap-2 py-2.5 px-4 bg-nx-cyan hover:bg-nx-cyan/90 text-white text-xs font-semibold rounded-xl shadow-sm transition-all"
           >
             <Plus className="w-4 h-4" />
             Uhamisho Mpya (New Transfer)
@@ -325,7 +325,7 @@ export default function TransfersPage() {
         
         {/* Transfers List (Left & Middle) */}
         <div className="lg:col-span-2 space-y-4">
-          <div className="bg-white border border-nx-border rounded-xl shadow-sm overflow-hidden">
+          <div className="bg-nx-surface border border-nx-border rounded-xl shadow-sm overflow-hidden">
             <div className="p-4 border-b border-nx-border bg-nx-surface">
               <h3 className="font-ui text-xs font-bold text-nx-text uppercase tracking-wider">
                 Orodha ya Uhamisho (Transfer Logs)
@@ -347,7 +347,7 @@ export default function TransfersPage() {
                       <th className="px-6 py-3">Maelezo</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-nx-border text-gray-700">
+                  <tbody className="divide-y divide-nx-border text-nx-text-sec">
                     {transfers.map(t => (
                       <tr 
                         key={t.id} 
@@ -361,29 +361,29 @@ export default function TransfersPage() {
                         }}
                         className={`cursor-pointer hover:bg-nx-surface/40 transition-colors ${selectedTransfer?.id === t.id ? 'bg-nx-cyan/5' : ''}`}
                       >
-                        <td className="px-6 py-4 whitespace-nowrap font-mono text-gray-500">
+                        <td className="px-6 py-4 whitespace-nowrap font-mono text-nx-text-muted">
                           {new Date(t.created_at).toLocaleDateString('en-TZ')}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="font-semibold text-gray-900 flex items-center gap-1.5">
+                          <div className="font-semibold text-nx-text flex items-center gap-1.5">
                             <span>{t.from_branch?.name || 'Ghala Kuu'}</span>
-                            <ArrowRight className="w-3 h-3 text-gray-400" />
+                            <ArrowRight className="w-3 h-3 text-nx-text-muted" />
                             <span>{t.to_branch?.name}</span>
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                            t.status === 'draft' ? 'bg-gray-100 text-gray-800' :
-                            t.status === 'dispatched' ? 'bg-orange-50 text-orange-700 border border-orange-100' :
-                            t.status === 'received' ? 'bg-green-50 text-green-700 border border-green-100' :
-                            'bg-red-50 text-red-700 border border-red-100'
+                            t.status === 'draft' ? 'bg-nx-elevated text-nx-text' :
+                            t.status === 'dispatched' ? 'bg-nx-orange/10 text-nx-orange border border-nx-orange/20' :
+                            t.status === 'received' ? 'bg-nx-green/10 text-nx-green border border-nx-green/20' :
+                            'bg-nx-red/10 text-nx-red border border-nx-red/20'
                           }`}>
                             {t.status === 'draft' ? 'Draft' :
                              t.status === 'dispatched' ? 'In Transit' :
                              t.status === 'received' ? 'Imepokewa' : 'Cancelled'}
                           </span>
                         </td>
-                        <td className="px-6 py-4 truncate max-w-[150px] text-gray-500">
+                        <td className="px-6 py-4 truncate max-w-[150px] text-nx-text-muted">
                           {t.notes || 'N/A'}
                         </td>
                       </tr>
@@ -391,7 +391,7 @@ export default function TransfersPage() {
 
                     {transfers.length === 0 && (
                       <tr>
-                        <td colSpan={4} className="px-6 py-12 text-center text-gray-500 font-ui">
+                        <td colSpan={4} className="px-6 py-12 text-center text-nx-text-muted font-ui">
                           Hakuna rekodi za uhamisho wa bidhaa kwa sasa.
                         </td>
                       </tr>
@@ -406,53 +406,53 @@ export default function TransfersPage() {
         {/* Transfer Detail Panel (Right) */}
         <div className="space-y-4">
           {selectedTransfer ? (
-            <div className="bg-white border border-nx-border rounded-xl shadow-sm p-5 space-y-5 animate-in fade-in duration-200">
+            <div className="bg-nx-surface border border-nx-border rounded-xl shadow-sm p-5 space-y-5 animate-in fade-in duration-200">
               <div className="flex items-center justify-between border-b border-nx-border pb-3">
-                <h3 className="font-ui text-sm font-bold text-gray-900 flex items-center gap-1">
-                  <FileText className="w-4 h-4 text-cyan-600" />
+                <h3 className="font-ui text-sm font-bold text-nx-text flex items-center gap-1">
+                  <FileText className="w-4 h-4 text-nx-cyan" />
                   Kagua Uhamisho (Detail Review)
                 </h3>
-                <span className="text-[10px] font-mono text-gray-500">ID: {selectedTransfer.id.slice(0, 8)}...</span>
+                <span className="text-[10px] font-mono text-nx-text-muted">ID: {selectedTransfer.id.slice(0, 8)}...</span>
               </div>
 
               {/* Status and summary */}
               <div className="space-y-2 text-xs">
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Kutoka (Source):</span>
-                  <span className="font-semibold text-gray-900">{selectedTransfer.from_branch?.name || 'Tawi la Chanzo'}</span>
+                  <span className="text-nx-text-muted">Kutoka (Source):</span>
+                  <span className="font-semibold text-nx-text">{selectedTransfer.from_branch?.name || 'Tawi la Chanzo'}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Kwenda (Destination):</span>
-                  <span className="font-semibold text-gray-900">{selectedTransfer.to_branch?.name}</span>
+                  <span className="text-nx-text-muted">Kwenda (Destination):</span>
+                  <span className="font-semibold text-nx-text">{selectedTransfer.to_branch?.name}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Hali (Status):</span>
-                  <span className="font-bold uppercase text-cyan-600">{selectedTransfer.status}</span>
+                  <span className="text-nx-text-muted">Hali (Status):</span>
+                  <span className="font-bold uppercase text-nx-cyan">{selectedTransfer.status}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Kumbukumbu (Notes):</span>
-                  <span className="text-gray-700 italic">{selectedTransfer.notes || 'N/A'}</span>
+                  <span className="text-nx-text-muted">Kumbukumbu (Notes):</span>
+                  <span className="text-nx-text-sec italic">{selectedTransfer.notes || 'N/A'}</span>
                 </div>
               </div>
 
               {/* Items Breakdown */}
               <div className="space-y-2">
-                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Orodha ya Bidhaa (Items):</p>
+                <p className="text-[10px] font-bold text-nx-text-muted uppercase tracking-widest">Orodha ya Bidhaa (Items):</p>
                 <div className="border border-nx-border bg-nx-surface/30 rounded-lg divide-y divide-nx-border overflow-hidden">
                   {selectedTransfer.transfer_items?.map((item: any) => (
                     <div key={item.id} className="p-3 flex justify-between items-center text-xs">
                       <div>
-                        <p className="font-semibold text-gray-900">
+                        <p className="font-semibold text-nx-text">
                           {item.product_variants?.product_families?.name || 'Bidhaa'}
                         </p>
-                        <p className="text-[10px] text-gray-500">
+                        <p className="text-[10px] text-nx-text-muted">
                           Color: {item.product_variants?.color || 'N/A'} • Size: {item.product_variants?.size}
                         </p>
                       </div>
                       
                       {selectedTransfer.status === 'dispatched' ? (
                         <div className="flex items-center gap-2">
-                          <span className="text-gray-500 text-[10px]">Alituma: {item.quantity}</span>
+                          <span className="text-nx-text-muted text-[10px]">Alituma: {item.quantity}</span>
                           <input
                             type="number"
                             min="0"
@@ -462,14 +462,14 @@ export default function TransfersPage() {
                               ...receivedQtys,
                               [item.id]: Math.min(item.quantity, Math.max(0, parseInt(e.target.value) || 0))
                             })}
-                            className="w-12 bg-white border border-nx-border text-center text-xs py-1 rounded focus:outline-none focus:border-cyan-500"
+                            className="w-12 bg-nx-elevated border border-nx-border text-nx-text text-center text-xs py-1 rounded focus:outline-none focus:border-nx-cyan"
                           />
                         </div>
                       ) : (
                         <div className="text-right">
-                          <p className="font-semibold text-gray-900">Kiwango: {item.quantity} pea</p>
+                          <p className="font-semibold text-nx-text">Kiwango: {item.quantity} pea</p>
                           {item.received_qty !== null && (
-                            <p className="text-[10px] text-green-600 font-medium">Imepokewa: {item.received_qty} pea</p>
+                            <p className="text-[10px] text-nx-green font-medium">Imepokewa: {item.received_qty} pea</p>
                           )}
                         </div>
                       )}
@@ -483,7 +483,7 @@ export default function TransfersPage() {
                 {selectedTransfer.status === 'draft' && userProfile?.role !== 'cashier' && (
                   <button
                     onClick={() => handleDispatch(selectedTransfer.id)}
-                    className="w-full flex items-center justify-center gap-2 py-2 px-4 bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-semibold rounded-xl shadow-sm transition-all"
+                    className="w-full flex items-center justify-center gap-2 py-2 px-4 bg-nx-cyan hover:bg-nx-cyan/90 text-white text-xs font-semibold rounded-xl shadow-sm transition-all"
                   >
                     <Send className="w-3.5 h-3.5" />
                     Tuma Mzigo (Dispatch Transfer)
@@ -493,7 +493,7 @@ export default function TransfersPage() {
                 {selectedTransfer.status === 'dispatched' && userProfile?.role !== 'cashier' && (
                   <button
                     onClick={() => handleReceive(selectedTransfer.id)}
-                    className="w-full flex items-center justify-center gap-2 py-2 px-4 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold rounded-xl shadow-sm transition-all"
+                    className="w-full flex items-center justify-center gap-2 py-2 px-4 bg-nx-green hover:bg-nx-green/90 text-white text-xs font-semibold rounded-xl shadow-sm transition-all"
                   >
                     <CheckSquare className="w-3.5 h-3.5" />
                     Thibitisha Upokeaji (Confirm Receive)
@@ -503,7 +503,7 @@ export default function TransfersPage() {
                 {['draft', 'dispatched'].includes(selectedTransfer.status) && userProfile?.role !== 'cashier' && (
                   <button
                     onClick={() => handleCancel(selectedTransfer.id)}
-                    className="w-full flex items-center justify-center gap-2 py-2 px-4 bg-white border border-red-200 hover:bg-red-50 text-red-600 text-xs font-semibold rounded-xl transition-all"
+                    className="w-full flex items-center justify-center gap-2 py-2 px-4 bg-nx-surface border border-nx-red/20 hover:bg-nx-red/10 text-nx-red text-xs font-semibold rounded-xl transition-all"
                   >
                     <XSquare className="w-3.5 h-3.5" />
                     Futa Uhamisho (Cancel Transfer)
@@ -512,7 +512,7 @@ export default function TransfersPage() {
               </div>
             </div>
           ) : (
-            <div className="bg-white border border-nx-border rounded-xl shadow-sm p-6 text-center text-nx-text-sec text-xs h-64 flex flex-col justify-center items-center">
+            <div className="bg-nx-surface border border-nx-border rounded-xl shadow-sm p-6 text-center text-nx-text-sec text-xs h-64 flex flex-col justify-center items-center">
               <ArrowRightLeft className="w-8 h-8 text-nx-text-muted/40 mb-3" />
               Tafadhali chagua rekodi ya uhamisho ili kuona maelezo au kufanya maamuzi ya stoki.
             </div>
@@ -523,20 +523,20 @@ export default function TransfersPage() {
       {/* CREATE NEW TRANSFER MODAL */}
       {isCreateOpen && (
         <div className="fixed inset-0 bg-black/45 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <form onSubmit={handleCreateTransfer} className="bg-white border border-nx-border rounded-2xl p-6 max-w-xl w-full space-y-5 shadow-2xl animate-in zoom-in-95 duration-200">
-            <h3 className="font-ui text-base font-bold text-gray-900 border-b border-nx-border pb-3 flex items-center gap-2">
-              <Plus className="w-5 h-5 text-cyan-600" />
+          <form onSubmit={handleCreateTransfer} className="bg-nx-surface border border-nx-border rounded-2xl p-6 max-w-xl w-full space-y-5 shadow-2xl animate-in zoom-in-95 duration-200">
+            <h3 className="font-ui text-base font-bold text-nx-text border-b border-nx-border pb-3 flex items-center gap-2">
+              <Plus className="w-5 h-5 text-nx-cyan" />
               Sajili Uhamisho Mpya wa Stoki (New Stock Transfer)
             </h3>
 
             {/* Select Branches */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Kutoka (Source branch)</label>
+                <label className="text-[10px] font-bold text-nx-text-muted uppercase tracking-wider">Kutoka (Source branch)</label>
                 <select
                   value={fromBranchId}
                   onChange={(e) => setFromBranchId(e.target.value)}
-                  className="w-full bg-nx-bg border border-nx-border text-xs py-2 px-3 rounded-lg focus:outline-none focus:border-cyan-500"
+                  className="w-full bg-nx-bg border border-nx-border text-xs py-2 px-3 rounded-lg focus:outline-none focus:border-nx-cyan"
                 >
                   <option value="">Chagua tawi la chanzo...</option>
                   {branches.map(b => (
@@ -546,11 +546,11 @@ export default function TransfersPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Kwenda (Target branch)</label>
+                <label className="text-[10px] font-bold text-nx-text-muted uppercase tracking-wider">Kwenda (Target branch)</label>
                 <select
                   value={toBranchId}
                   onChange={(e) => setToBranchId(e.target.value)}
-                  className="w-full bg-nx-bg border border-nx-border text-xs py-2 px-3 rounded-lg focus:outline-none focus:border-cyan-500"
+                  className="w-full bg-nx-bg border border-nx-border text-xs py-2 px-3 rounded-lg focus:outline-none focus:border-nx-cyan"
                 >
                   <option value="">Chagua tawi lengo...</option>
                   {branches.filter(b => b.id !== fromBranchId).map(b => (
@@ -562,11 +562,11 @@ export default function TransfersPage() {
 
             {/* Select Variant and Quantity */}
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Chagua Bidhaa ya Kuhamisha (Add variant)</label>
+              <label className="text-[10px] font-bold text-nx-text-muted uppercase tracking-wider">Chagua Bidhaa ya Kuhamisha (Add variant)</label>
               <div className="flex gap-2">
                 <select
                   id="variant-select"
-                  className="flex-1 bg-nx-bg border border-nx-border text-xs py-2 px-3 rounded-lg focus:outline-none focus:border-cyan-500"
+                  className="flex-1 bg-nx-bg border border-nx-border text-xs py-2 px-3 rounded-lg focus:outline-none focus:border-nx-cyan"
                   onChange={(e) => {
                     const select = e.target
                     const val = select.value
@@ -592,7 +592,7 @@ export default function TransfersPage() {
                   id="qty-input"
                   min="1"
                   placeholder="Kiasi"
-                  className="w-20 bg-nx-bg border border-nx-border text-center text-xs rounded-lg focus:outline-none focus:border-cyan-500"
+                  className="w-20 bg-nx-bg border border-nx-border text-center text-xs rounded-lg focus:outline-none focus:border-nx-cyan"
                 />
 
                 <button
@@ -607,31 +607,31 @@ export default function TransfersPage() {
                       toast.error('Chagua bidhaa na uingize kiasi husika')
                     }
                   }}
-                  className="py-2 px-4 bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-semibold rounded-lg transition-colors border border-nx-border"
+                  className="py-2 px-4 bg-nx-elevated hover:bg-nx-hover text-nx-text text-xs font-semibold rounded-lg transition-colors border border-nx-border"
                 >
                   Ongeza
                 </button>
               </div>
-              <span id="available-span" className="text-[10px] text-cyan-600 font-semibold block"></span>
+              <span id="available-span" className="text-[10px] text-nx-cyan font-semibold block"></span>
             </div>
 
             {/* Selected Items Table */}
             {selectedItems.length > 0 && (
               <div className="border border-nx-border rounded-xl bg-nx-surface/30 overflow-hidden text-xs">
-                <div className="p-3 border-b border-nx-border bg-nx-surface font-semibold text-gray-700">Bidhaa Zilizochaguliwa (Selected Items):</div>
+                <div className="p-3 border-b border-nx-border bg-nx-surface font-semibold text-nx-text-sec">Bidhaa Zilizochaguliwa (Selected Items):</div>
                 <div className="divide-y divide-nx-border max-h-40 overflow-y-auto">
                   {selectedItems.map(item => (
                     <div key={item.variant_id} className="p-2.5 flex justify-between items-center">
                       <div>
-                        <p className="font-semibold text-gray-900">{item.name}</p>
-                        <p className="text-[10px] text-gray-500">Max available: {item.available_qty} pairs</p>
+                        <p className="font-semibold text-nx-text">{item.name}</p>
+                        <p className="text-[10px] text-nx-text-muted">Max available: {item.available_qty} pairs</p>
                       </div>
                       <div className="flex items-center gap-3">
-                        <span className="font-bold text-cyan-600">{item.quantity} pea</span>
+                        <span className="font-bold text-nx-cyan">{item.quantity} pea</span>
                         <button
                           type="button"
                           onClick={() => setSelectedItems(selectedItems.filter(i => i.variant_id !== item.variant_id))}
-                          className="text-red-500 hover:text-red-700 text-xs p-1"
+                          className="text-nx-red hover:text-nx-red/80 text-xs p-1"
                         >
                           Futa
                         </button>
@@ -644,13 +644,13 @@ export default function TransfersPage() {
 
             {/* Notes */}
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Kumbukumbu / Sababu (Notes)</label>
+              <label className="text-[10px] font-bold text-nx-text-muted uppercase tracking-wider">Kumbukumbu / Sababu (Notes)</label>
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Ingiza maelezo kuhusu uhamisho huu (e.g. upungufu wa stoki, duka jipya)..."
                 rows={2}
-                className="w-full bg-nx-bg border border-nx-border text-xs p-3 rounded-lg focus:outline-none focus:border-cyan-500 resize-none"
+                className="w-full bg-nx-bg border border-nx-border text-xs p-3 rounded-lg focus:outline-none focus:border-nx-cyan resize-none"
               />
             </div>
 
@@ -662,13 +662,13 @@ export default function TransfersPage() {
                   setIsCreateOpen(false)
                   setSelectedItems([])
                 }}
-                className="py-2.5 px-4 bg-white border border-nx-border hover:bg-nx-surface text-gray-700 text-xs font-semibold rounded-xl transition-all"
+                className="py-2.5 px-4 bg-nx-surface border border-nx-border hover:bg-nx-surface text-nx-text-sec text-xs font-semibold rounded-xl transition-all"
               >
                 Ghairi (Cancel)
               </button>
               <button
                 type="submit"
-                className="py-2.5 px-4 bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-semibold rounded-xl shadow-sm transition-all"
+                className="py-2.5 px-4 bg-nx-cyan hover:bg-nx-cyan/90 text-white text-xs font-semibold rounded-xl shadow-sm transition-all"
               >
                 Hifadhi Draft (Save Draft)
               </button>

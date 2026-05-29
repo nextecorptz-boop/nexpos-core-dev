@@ -74,12 +74,11 @@ export default function AppHeader({ user }: AppHeaderProps) {
       {/* Utilities / Profile Section */}
       <div className="flex items-center gap-6">
         {/* Network Status Badge */}
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold select-none border transition-colors duration-200"
-             style={{
-               backgroundColor: isOnline ? 'rgba(16,185,129,0.08)' : 'rgba(239,68,68,0.08)',
-               color: isOnline ? '#10B981' : '#EF4444',
-               borderColor: isOnline ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)'
-             }}>
+        <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold select-none border transition-colors duration-200 ${
+          isOnline
+            ? 'bg-nx-green/10 text-nx-green border-nx-green/20'
+            : 'bg-nx-red/10 text-nx-red border-nx-red/20'
+        }`}>
           {isOnline ? (
             <>
               <Wifi className="w-3.5 h-3.5" />

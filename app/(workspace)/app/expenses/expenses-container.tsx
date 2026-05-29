@@ -267,7 +267,7 @@ export function ExpensesContainer({
           </h3>
           <span className="text-[10px] text-nx-text-muted mt-1">Sum of logged expenses</span>
           {metrics.recentExpenseSpike && (
-            <div className="absolute top-4 right-4 flex items-center gap-1 bg-red-100 text-red-600 px-2 py-0.5 rounded text-[10px] font-bold animate-pulse">
+            <div className="absolute top-4 right-4 flex items-center gap-1 bg-nx-red/10 text-nx-red px-2 py-0.5 rounded text-[10px] font-bold animate-pulse">
               <AlertCircle className="w-3.5 h-3.5" />
               Spike Flagged
             </div>
@@ -433,7 +433,7 @@ export function ExpensesContainer({
             <tbody className="divide-y divide-nx-border/50 text-[13px]">
               {filteredExpenses.map(exp => (
                 <tr key={exp.id} className="hover:bg-nx-hover/20 transition-colors">
-                  <td className="py-3.5 px-4 font-semibold text-nx-text sticky left-0 bg-white z-10">
+                  <td className="py-3.5 px-4 font-semibold text-nx-text sticky left-0 bg-nx-surface z-10">
                     {exp.description}
                   </td>
                   <td className="py-3.5 px-4 text-nx-text-sec">
@@ -442,7 +442,7 @@ export function ExpensesContainer({
                   <td className="py-3.5 px-4 text-nx-text-sec font-data">
                     {new Date(exp.expense_date).toLocaleDateString()}
                   </td>
-                  <td className="py-3.5 px-4 text-right font-data font-bold text-red-600">
+                  <td className="py-3.5 px-4 text-right font-data font-bold text-nx-red">
                     -{formatCurrency(exp.amount)}
                   </td>
                 </tr>

@@ -1,23 +1,20 @@
 import { requireRole } from '@/lib/auth/session'
 import { createClient } from '@/lib/supabase/server'
-import { 
-  TrendingUp, 
-  DollarSign, 
-  Package, 
-  Plus, 
-  ShoppingCart, 
-  ArrowUpRight, 
-  ArrowDownRight, 
-  Wallet, 
-  PackagePlus, 
-  UserPlus, 
+import {
+  TrendingUp,
+  DollarSign,
+  Package,
+  Plus,
+  ShoppingCart,
+  Wallet,
+  PackagePlus,
+  UserPlus,
   ClipboardList,
   Activity,
-  ShieldAlert,
-  Signal
 } from 'lucide-react'
 import Link from 'next/link'
 import { forecastRevenue } from '@/lib/domain/forecast'
+import { NxKpiCard } from '@/components/workspace/ui/nx-kpi-card'
 
 export const dynamic = 'force-dynamic'
 
@@ -116,81 +113,34 @@ export default async function DashboardPage() {
 
       {/* Zone 2: KPI Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-[14px] mb-[20px] select-none">
-        {/* Revenue */}
-        <div className="bg-nx-surface border border-nx-border rounded-nx-card p-5 hover:border-nx-border/80 transition-colors">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-[38px] h-[38px] rounded-[8px] bg-nx-cyan/10 flex items-center justify-center">
-              <DollarSign className="w-5 h-5 text-nx-cyan" />
-            </div>
-            <p className="font-ui text-[12px] text-nx-text-sec font-medium">Revenue</p>
-          </div>
-          <div className="flex items-baseline gap-1 mb-1">
-            <span className="font-data text-[20px] font-bold text-nx-text">
-              {formatCurrency(todaysRevenue)}
-            </span>
-          </div>
-          <div className="flex items-center text-[12px] text-nx-green font-medium">
-            <ArrowUpRight className="w-3 h-3 mr-1" />
-            <span>12%</span>
-          </div>
-        </div>
-
-        {/* Orders */}
-        <div className="bg-nx-surface border border-nx-border rounded-nx-card p-5 hover:border-nx-border/80 transition-colors">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-[38px] h-[38px] rounded-[8px] bg-nx-cyan/10 flex items-center justify-center">
-              <ShoppingCart className="w-5 h-5 text-nx-cyan" />
-            </div>
-            <p className="font-ui text-[12px] text-nx-text-sec font-medium">Orders</p>
-          </div>
-          <div className="flex items-baseline gap-1 mb-1">
-            <span className="font-data text-[22px] font-bold text-nx-text">
-              {orders}
-            </span>
-          </div>
-          <div className="flex items-center text-[12px] text-nx-green font-medium">
-            <ArrowUpRight className="w-3 h-3 mr-1" />
-            <span>4%</span>
-          </div>
-        </div>
-
-        {/* Avg Order */}
-        <div className="bg-nx-surface border border-nx-border rounded-nx-card p-5 hover:border-nx-border/80 transition-colors">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-[38px] h-[38px] rounded-[8px] bg-nx-cyan/10 flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-nx-cyan" />
-            </div>
-            <p className="font-ui text-[12px] text-nx-text-sec font-medium">Avg Order</p>
-          </div>
-          <div className="flex items-baseline gap-1 mb-1">
-            <span className="font-data text-[20px] font-bold text-nx-text">
-              {formatCurrency(avgOrder)}
-            </span>
-          </div>
-          <div className="flex items-center text-[12px] text-nx-red font-medium">
-            <ArrowDownRight className="w-3 h-3 mr-1" />
-            <span>2%</span>
-          </div>
-        </div>
-
-        {/* Gross Profit */}
-        <div className="bg-nx-surface border border-nx-border rounded-nx-card p-5 hover:border-nx-border/80 transition-colors">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-[38px] h-[38px] rounded-[8px] bg-nx-gold/10 flex items-center justify-center">
-              <Wallet className="w-5 h-5 text-nx-gold" />
-            </div>
-            <p className="font-ui text-[12px] text-nx-text-sec font-medium">Gross Profit</p>
-          </div>
-          <div className="flex items-baseline gap-1 mb-1">
-            <span className="font-data text-[20px] font-bold text-nx-text">
-              {formatCurrency(grossProfit)}
-            </span>
-          </div>
-          <div className="flex items-center text-[12px] text-nx-green font-medium">
-            <ArrowUpRight className="w-3 h-3 mr-1" />
-            <span>8%</span>
-          </div>
-        </div>
+        <NxKpiCard
+          label="Revenue"
+          value={formatCurrency(todaysRevenue)}
+          icon={DollarSign}
+          iconColor="cyan"
+          trend={{ direction: 'up', label: '12%' }}
+        />
+        <NxKpiCard
+          label="Orders"
+          value={String(orders)}
+          icon={ShoppingCart}
+          iconColor="cyan"
+          trend={{ direction: 'up', label: '4%' }}
+        />
+        <NxKpiCard
+          label="Avg Order"
+          value={formatCurrency(avgOrder)}
+          icon={TrendingUp}
+          iconColor="cyan"
+          trend={{ direction: 'down', label: '2%' }}
+        />
+        <NxKpiCard
+          label="Gross Profit"
+          value={formatCurrency(grossProfit)}
+          icon={Wallet}
+          iconColor="gold"
+          trend={{ direction: 'up', label: '8%' }}
+        />
       </div>
 
       {/* Zone 3: Analytics Row */}
@@ -246,7 +196,7 @@ export default async function DashboardPage() {
           </div>
           <div className="flex items-center justify-between pt-2.5">
             <span className="text-[12.5px] text-nx-text-sec">Total Shift Variance</span>
-            <span className={`font-data font-bold ${totalVarianceVal < 0 ? 'text-red-600' : 'text-nx-text'}`}>
+            <span className={`font-data font-bold ${totalVarianceVal < 0 ? 'text-nx-red' : 'text-nx-text'}`}>
               {formatCurrency(totalVarianceVal)}
             </span>
           </div>
@@ -316,7 +266,7 @@ export default async function DashboardPage() {
                         {formatCurrency(sale.total_amount)}
                       </td>
                       <td className="py-3 px-5">
-                        <span className="px-2 py-1 rounded-nx-full text-[10px] font-medium bg-nx-green/10 text-nx-green uppercase tracking-wide">
+                        <span className="px-2 py-1 rounded-full text-[10px] font-medium bg-nx-green/10 text-nx-green uppercase tracking-wide">
                           {sale.status}
                         </span>
                       </td>

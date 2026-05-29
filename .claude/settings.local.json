@@ -15,7 +15,9 @@
       "Read(//tmp/**)",
       "Bash(grep -o '{\"name\":\"[^\"]*\",\"title\":\"[^\"]*\",\"level\":\"[^\"]*\"[^}]*\"metadata\":{\"name\":\"[^\"]*\"')",
       "Bash(awk '-F|' '{ *)",
-      "Bash(node -e \"const data = require\\(String.raw\\\\`C:\\\\Users\\\\wise_gtr\\\\.claude\\\\projects\\\\C--Users-wise-gtr-Desktop-Demo-Websites-NEXPOS\\\\f8c4bf33-2ee4-424f-880f-a327e3b17e07\\\\tool-results\\\\toolu_01KrNrMTbLWSx4qYYHHDTZtx.json\\\\`\\); const parsed = JSON.parse\\(data[0].text\\); const tables = parsed.tables; const noRls = tables.filter\\(t => !t.rls_enabled\\).map\\(t => t.name\\); console.log\\('RLS OFF:', JSON.stringify\\(noRls\\)\\); console.log\\('TOTAL:', tables.length\\);\")"
+      "Bash(node -e \"const data = require\\(String.raw\\\\`C:\\\\Users\\\\wise_gtr\\\\.claude\\\\projects\\\\C--Users-wise-gtr-Desktop-Demo-Websites-NEXPOS\\\\f8c4bf33-2ee4-424f-880f-a327e3b17e07\\\\tool-results\\\\toolu_01KrNrMTbLWSx4qYYHHDTZtx.json\\\\`\\); const parsed = JSON.parse\\(data[0].text\\); const tables = parsed.tables; const noRls = tables.filter\\(t => !t.rls_enabled\\).map\\(t => t.name\\); console.log\\('RLS OFF:', JSON.stringify\\(noRls\\)\\); console.log\\('TOTAL:', tables.length\\);\")",
+      "Bash(cd \"/c/Users/wise_gtr/Desktop/Demo Websites/NEXPOS\" && find app -type f \\\\\\( -name \"*.tsx\" -o -name \"*.ts\" \\\\\\) | head -50)",
+      "Bash(grep -r \"#[0-9a-fA-F]\\\\{3,6\\\\}\" --include=\"*.tsx\" --include=\"*.ts\" app components)"
     ]
   },
   "enableAllProjectMcpServers": true,

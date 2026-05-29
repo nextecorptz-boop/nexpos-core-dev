@@ -160,12 +160,12 @@ export function StaffInsightsContainer({
         </div>
 
         <div className="bg-nx-surface border border-nx-border rounded-nx-card p-5 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center text-red-500">
+          <div className="w-12 h-12 rounded-full bg-nx-red/10 flex items-center justify-center text-nx-red">
             <ShieldAlert className="w-6 h-6" />
           </div>
           <div>
-            <span className="text-[11px] font-bold text-red-600 uppercase tracking-wider">Refund Anomalies Flagged</span>
-            <h3 className="font-data text-[20px] font-bold text-red-600 mt-0.5">{kpis.totalAnomalies}</h3>
+            <span className="text-[11px] font-bold text-nx-red uppercase tracking-wider">Refund Anomalies Flagged</span>
+            <h3 className="font-data text-[20px] font-bold text-nx-red mt-0.5">{kpis.totalAnomalies}</h3>
           </div>
         </div>
       </div>
@@ -202,7 +202,7 @@ export function StaffInsightsContainer({
               {filteredStaff.map(staff => (
                 <tr key={staff.id} className="hover:bg-nx-hover/20 transition-colors">
                   {/* Sticky Column */}
-                  <td className="py-3.5 px-4 sticky left-0 bg-white z-10">
+                  <td className="py-3.5 px-4 sticky left-0 bg-nx-surface z-10">
                     <div className="font-semibold text-nx-text">{staff.full_name}</div>
                     <div className="text-[10px] text-nx-text-sec">{staff.email}</div>
                   </td>
@@ -223,12 +223,12 @@ export function StaffInsightsContainer({
                   </td>
                   <td className="py-3.5 px-4 text-center">
                     {staff.refundAnomaly ? (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-red-500/10 text-red-600 text-[10px] font-bold uppercase tracking-wider animate-pulse">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-nx-red/10 text-nx-red text-[10px] font-bold uppercase tracking-wider animate-pulse">
                         <AlertTriangle className="w-3.5 h-3.5" />
                         Anomaly Flagged
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-green-500/10 text-green-600 text-[10px] font-bold uppercase tracking-wider">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-nx-green/10 text-nx-green text-[10px] font-bold uppercase tracking-wider">
                         <CheckCircle2 className="w-3.5 h-3.5" />
                         Clear Audit
                       </span>
@@ -239,7 +239,7 @@ export function StaffInsightsContainer({
                       <div className="flex-1 bg-nx-elevated h-1.5 rounded-full overflow-hidden">
                         <div 
                           className={`h-full rounded-full ${
-                            staff.performanceScore > 75 ? 'bg-green-500' :
+                            staff.performanceScore > 75 ? 'bg-nx-green' :
                             staff.performanceScore > 50 ? 'bg-nx-gold' :
                             'bg-orange-500'
                           }`}

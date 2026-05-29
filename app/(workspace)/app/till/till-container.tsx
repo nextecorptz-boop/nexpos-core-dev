@@ -171,7 +171,7 @@ export function TillContainer({
             <div className="bg-nx-surface border border-nx-border rounded-nx-card p-5 space-y-6">
               <div className="flex items-center justify-between border-b border-nx-border pb-4 select-none">
                 <div className="flex items-center gap-3">
-                  <span className="w-3.5 h-3.5 rounded-full bg-green-500 animate-pulse" />
+                  <span className="w-3.5 h-3.5 rounded-full bg-nx-green animate-pulse" />
                   <div>
                     <h3 className="font-bold text-[14px] text-nx-text">Till Session Open</h3>
                     <p className="text-[11px] text-nx-text-sec">
@@ -338,7 +338,7 @@ export function TillContainer({
 
                     return (
                       <tr key={session.id} className="hover:bg-nx-hover/20 transition-colors">
-                        <td className="py-3.5 px-4 font-semibold text-nx-text sticky left-0 bg-white z-10">
+                        <td className="py-3.5 px-4 font-semibold text-nx-text sticky left-0 bg-nx-surface z-10">
                           {session.opened_by_user?.full_name || cashierName}
                         </td>
                         <td className="py-3.5 px-4 text-nx-text-sec font-data">
@@ -357,15 +357,15 @@ export function TillContainer({
                           {session.closing_float ? formatCurrency(session.closing_float) : '-'}
                         </td>
                         <td className={`py-3.5 px-4 text-right font-data font-bold ${
-                          varianceVal < 0 ? 'text-red-600' : varianceVal > 0 ? 'text-green-600' : 'text-nx-text-sec'
+                          varianceVal < 0 ? 'text-nx-red' : varianceVal > 0 ? 'text-nx-green' : 'text-nx-text-sec'
                         }`}>
                           {session.closed_at ? formatCurrency(varianceVal) : '-'}
                         </td>
                         <td className="py-3.5 px-4 text-center">
                           <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                            session.status === 'open' ? 'bg-green-500/10 text-green-600' :
-                            risk === 'critical' ? 'bg-red-500/10 text-red-600' :
-                            risk === 'high_risk' ? 'bg-orange-500/10 text-orange-600' :
+                            session.status === 'open' ? 'bg-nx-green/10 text-nx-green' :
+                            risk === 'critical' ? 'bg-nx-red/10 text-nx-red' :
+                            risk === 'high_risk' ? 'bg-orange-500/10 text-nx-orange' :
                             'bg-nx-cyan/10 text-nx-cyan'
                           }`}>
                             {session.status === 'open' ? 'open' : risk}
@@ -404,8 +404,8 @@ export function TillContainer({
               <p>Counted Cash - Expected Cash</p>
               <span className="font-bold mt-2 block">Risk Thresholds:</span>
               <p className="text-nx-gold font-bold">Watch: Variance &gt; 0 TZS</p>
-              <p className="text-orange-600 font-bold">High: Variance &gt; 10,000 TZS</p>
-              <p className="text-red-600 font-bold">Critical: Variance &gt; 50,000 TZS</p>
+              <p className="text-nx-orange font-bold">High: Variance &gt; 10,000 TZS</p>
+              <p className="text-nx-red font-bold">Critical: Variance &gt; 50,000 TZS</p>
             </div>
             <p className="text-[11.5px] italic">
               All session reconciliation reports are uploaded to the audit logs immediately, noting user details and timestamps.

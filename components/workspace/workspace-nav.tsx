@@ -3,18 +3,18 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { 
-  LayoutDashboard, 
-  ShoppingCart, 
-  Package, 
-  Warehouse, 
-  Users, 
-  CreditCard, 
-  ShoppingBag, 
-  TrendingUp, 
-  DollarSign, 
-  RotateCcw, 
-  Settings, 
+import {
+  LayoutDashboard,
+  ShoppingCart,
+  Package,
+  Warehouse,
+  Users,
+  CreditCard,
+  ShoppingBag,
+  TrendingUp,
+  DollarSign,
+  RotateCcw,
+  Settings,
   UserCog,
   LogOut,
   Menu,
@@ -24,7 +24,8 @@ import {
   Globe,
   ClipboardList,
   Activity,
-  ShieldAlert
+  ShieldAlert,
+  ArrowLeftRight
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 
@@ -117,7 +118,7 @@ export default function WorkspaceNav({ user }: { user: any }) {
   const manageGroup: NavItem[] = [
     { name: 'Products', href: '/app/products', icon: Package, roles: ['owner', 'manager'] },
     { name: 'Inventory', href: '/app/inventory', icon: Warehouse, roles: ['owner', 'manager'] },
-    { name: 'Transfers', href: '/app/transfers', icon: Warehouse, roles: ['owner', 'manager'] },
+    { name: 'Transfers', href: '/app/transfers', icon: ArrowLeftRight, roles: ['owner', 'manager'] },
     { name: 'Customers', href: '/app/customers', icon: Users, roles: ['owner', 'manager', 'cashier'] },
     { name: 'Suppliers', href: '/app/suppliers', icon: Users, roles: ['owner', 'manager'] },
     { name: 'Purchases', href: '/app/purchases', icon: ShoppingBag, roles: ['owner', 'manager'] },

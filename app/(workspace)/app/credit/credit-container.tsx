@@ -354,11 +354,11 @@ export function CreditContainer({
         </div>
 
         <div className="bg-nx-surface border border-nx-border rounded-nx-card p-4 flex flex-col justify-between">
-          <span className="text-[11px] font-bold text-red-600 uppercase tracking-wider">61+ Days Late</span>
-          <h3 className="font-data text-[18px] font-bold text-red-600 mt-2">
+          <span className="text-[11px] font-bold text-nx-red uppercase tracking-wider">61+ Days Late</span>
+          <h3 className="font-data text-[18px] font-bold text-nx-red mt-2">
             {formatCurrency(kpis.age61Plus)}
           </h3>
-          <span className="text-[10px] text-red-600/80 mt-1">Critical recovery</span>
+          <span className="text-[10px] text-nx-red/70 mt-1">Critical recovery</span>
         </div>
       </div>
 
@@ -426,7 +426,7 @@ export function CreditContainer({
                       >
                         {/* Sticky First Column */}
                         <td className={`py-3.5 px-4 font-semibold text-nx-text sticky left-0 z-10 ${
-                          isSelected ? 'bg-nx-cyan-[5%] md:bg-white' : 'bg-white'
+                          isSelected ? 'bg-nx-cyan/5 md:bg-nx-surface' : 'bg-nx-surface'
                         }`}>
                           {account.customer?.full_name}
                         </td>
@@ -443,7 +443,7 @@ export function CreditContainer({
                         </td>
                         <td className="py-3.5 px-4">
                           <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                            account.riskLevel === 'critical' ? 'bg-red-500/10 text-red-600' :
+                            account.riskLevel === 'critical' ? 'bg-nx-red/10 text-nx-red' :
                             account.riskLevel === 'high_risk' ? 'bg-orange-500/10 text-orange-600' :
                             account.riskLevel === 'watch' ? 'bg-nx-gold/10 text-nx-gold' :
                             'bg-nx-cyan/10 text-nx-cyan'
@@ -454,7 +454,7 @@ export function CreditContainer({
                         <td className="py-3.5 px-4 text-right font-data text-nx-text-sec">
                           {formatCurrency(account.principal_amount)}
                         </td>
-                        <td className="py-3.5 px-4 text-right font-data text-green-600">
+                        <td className="py-3.5 px-4 text-right font-data text-nx-green">
                           {formatCurrency(account.amount_paid)}
                         </td>
                         <td className="py-3.5 px-4 text-right font-data font-bold text-nx-text">
@@ -464,13 +464,13 @@ export function CreditContainer({
                           {account.balance_due > 0 ? (
                             <button
                               onClick={() => handleWhatsAppNudge(account)}
-                              className="p-1 hover:bg-nx-hover text-green-600 rounded transition-colors"
+                              className="p-1 hover:bg-nx-hover text-nx-green rounded transition-colors"
                               title="WhatsApp Nudge"
                             >
                               <MessageSquare className="w-4 h-4" />
                             </button>
                           ) : (
-                            <span className="text-green-600 flex justify-center"><Check className="w-4 h-4" /></span>
+                            <span className="text-nx-green flex justify-center"><Check className="w-4 h-4" /></span>
                           )}
                         </td>
                       </tr>
@@ -523,7 +523,7 @@ export function CreditContainer({
               </div>
               <div>
                 <span className="text-[10px] text-nx-text-muted uppercase font-bold tracking-wider">Total Repayed</span>
-                <p className="font-data font-bold text-[16px] text-green-600 mt-0.5">
+                <p className="font-data font-bold text-[16px] text-nx-green mt-0.5">
                   {formatCurrency(selectedAccount.amount_paid)}
                 </p>
               </div>

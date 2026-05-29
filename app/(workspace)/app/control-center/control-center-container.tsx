@@ -245,7 +245,7 @@ export function ControlCenterContainer({
           {/* Sync Queue & Network Status bar */}
       <div className="bg-nx-surface border border-nx-border p-4 rounded-nx-card flex flex-col sm:flex-row items-center justify-between gap-4 select-none">
         <div className="flex items-center gap-3">
-          <div className={`p-2 rounded-full ${isOnline ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
+          <div className={`p-2 rounded-full ${isOnline ? 'bg-nx-green/10 text-nx-green' : 'bg-nx-red/10 text-nx-red'}`}>
             <Signal className="w-5 h-5" />
           </div>
           <div>
@@ -289,7 +289,7 @@ export function ControlCenterContainer({
 
             <div className="space-y-1">
               <span className="text-[10px] text-nx-text-muted uppercase font-bold tracking-wider">Average Daily Burn Rate</span>
-              <h4 className="font-data font-bold text-[16px] text-red-600">
+              <h4 className="font-data font-bold text-[16px] text-nx-red">
                 -{formatCurrency(financialMetrics.dailyBurn)}
               </h4>
             </div>
@@ -317,7 +317,7 @@ export function ControlCenterContainer({
                 <span className="font-semibold text-nx-text mt-0.5 block">{stockRisks.lowStockCount} items below threshold</span>
               </div>
               <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                stockRisks.lowStockCount > 0 ? 'bg-orange-500/10 text-orange-600' : 'bg-green-500/10 text-green-600'
+                stockRisks.lowStockCount > 0 ? 'bg-orange-500/10 text-orange-600' : 'bg-nx-green/10 text-nx-green'
               }`}>
                 {stockRisks.lowStockCount > 0 ? 'Shortages' : 'Healthy'}
               </span>
@@ -335,7 +335,7 @@ export function ControlCenterContainer({
               <div>
                 <span className="text-[10px] text-nx-text-muted uppercase font-bold tracking-wider block">Till Variance Total</span>
                 <span className={`font-data font-bold mt-0.5 block ${
-                  financialMetrics.tillVariance < 0 ? 'text-red-600' : 'text-nx-text'
+                  financialMetrics.tillVariance < 0 ? 'text-nx-red' : 'text-nx-text'
                 }`}>
                   {formatCurrency(financialMetrics.tillVariance)}
                 </span>
@@ -357,13 +357,13 @@ export function ControlCenterContainer({
               <div key={p.id} className="flex items-center justify-between gap-3 text-[13px] border-b border-nx-border/50 pb-2 last:border-b-0 last:pb-0">
                 <div>
                   <div className="font-semibold text-nx-text">{p.customer?.full_name}</div>
-                  <div className="text-[10px] text-red-600 font-data">
+                  <div className="text-[10px] text-nx-red font-data">
                     {formatCurrency(p.balance_due)} | {p.daysOverdue} days late
                   </div>
                 </div>
                 <button
                   onClick={() => handleWhatsAppNudge(p)}
-                  className="p-1.5 hover:bg-nx-hover text-green-600 rounded transition-colors"
+                  className="p-1.5 hover:bg-nx-hover text-nx-green rounded transition-colors"
                   title="Nudge via WhatsApp"
                 >
                   <MessageSquare className="w-4 h-4" />
@@ -412,7 +412,7 @@ export function ControlCenterContainer({
         {/* Right: Security & Audits alert radar summary */}
         <div className="bg-nx-surface border border-nx-border rounded-nx-card p-5 space-y-4 select-none">
           <h3 className="font-bold text-[14px] text-nx-text border-b border-nx-border pb-3 flex items-center gap-2">
-            <ShieldAlert className="w-4.5 h-4.5 text-red-600" />
+            <ShieldAlert className="w-4.5 h-4.5 text-nx-red" />
             Platform Alert Summary
           </h3>
 

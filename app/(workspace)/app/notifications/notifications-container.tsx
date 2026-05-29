@@ -147,7 +147,7 @@ export function NotificationsContainer({
               className={`px-4 py-2 rounded-nx-btn text-[12px] font-bold uppercase tracking-wider transition-all flex items-center gap-2 ${
                 filterSeverity === tab
                   ? tab === 'critical' 
-                    ? 'bg-red-500 text-white'
+                    ? 'bg-nx-red text-white'
                     : tab === 'warning'
                     ? 'bg-orange-500 text-white'
                     : 'bg-nx-cyan text-white'
@@ -170,26 +170,26 @@ export function NotificationsContainer({
             key={alert.id} 
             className={`border rounded-nx-card p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all duration-150 ${
               alert.severity === 'critical'
-                ? 'bg-red-50/40 border-red-200 hover:bg-red-50/60'
-                : 'bg-orange-50/30 border-orange-200 hover:bg-orange-50/50'
+                ? 'bg-nx-red/10 border-nx-red/20 hover:bg-nx-red/15'
+                : 'bg-nx-orange/10 border-nx-orange/20 hover:bg-nx-orange/15'
             }`}
           >
             <div className="flex items-start gap-3">
               <div className="mt-0.5 shrink-0">
                 {alert.severity === 'critical' ? (
-                  <ShieldAlert className="w-5 h-5 text-red-600" />
+                  <ShieldAlert className="w-5 h-5 text-nx-red" />
                 ) : (
                   <AlertCircle className="w-5 h-5 text-orange-600" />
                 )}
               </div>
               <div>
                 <h4 className={`text-[13px] font-bold ${
-                  alert.severity === 'critical' ? 'text-red-900' : 'text-orange-900'
+                  alert.severity === 'critical' ? 'text-nx-red' : 'text-nx-orange'
                 }`}>
                   {alert.title}
                 </h4>
                 <p className={`text-[12px] mt-1 leading-relaxed ${
-                  alert.severity === 'critical' ? 'text-red-700' : 'text-orange-700'
+                  alert.severity === 'critical' ? 'text-nx-red' : 'text-nx-orange'
                 }`}>
                   {alert.message}
                 </p>
@@ -203,7 +203,7 @@ export function NotificationsContainer({
               {alert.isWhatsApp ? (
                 <button
                   onClick={() => handleWhatsAppNudge(alert.accountData)}
-                  className="bg-green-600 hover:bg-green-700 text-white font-semibold text-[12px] px-3.5 py-2 rounded-nx-btn flex items-center gap-1.5 transition-transform active:scale-95 shadow-sm"
+                  className="bg-nx-green hover:bg-nx-green/90 text-white font-semibold text-[12px] px-3.5 py-2 rounded-nx-btn flex items-center gap-1.5 transition-transform active:scale-95 shadow-sm"
                 >
                   <MessageSquare className="w-4 h-4" />
                   <span>{alert.actionLabel}</span>
@@ -223,7 +223,7 @@ export function NotificationsContainer({
 
         {filteredAlerts.length === 0 && (
           <div className="bg-nx-surface border border-nx-border rounded-nx-card p-12 text-center select-none">
-            <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-4" />
+            <CheckCircle2 className="w-12 h-12 text-nx-green mx-auto mb-4" />
             <h3 className="font-bold text-[15px] text-nx-text">Radar Clean: Zero Issues Found</h3>
             <p className="text-[12px] text-nx-text-sec mt-1 max-w-sm mx-auto">
               Heuristic engines report normal operations. All stock thresholds, cash balances, and refund ratios are clean.
