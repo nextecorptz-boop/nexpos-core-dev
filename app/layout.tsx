@@ -22,12 +22,12 @@ export const viewport: Viewport = {
   userScalable: false,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const initialLang = (cookieStore.get('nx_lang')?.value || 'en') as Language;
 
   return (

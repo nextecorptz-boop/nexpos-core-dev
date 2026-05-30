@@ -82,7 +82,6 @@ export default function TransfersPage() {
         const { data: branchData } = await supabase
           .from('branches')
           .select('id, name')
-          .eq('tenant_id', profile.tenant_id)
           .eq('is_active', true)
         
         setBranches(branchData || [])
@@ -105,7 +104,6 @@ export default function TransfersPage() {
               )
             )
           `)
-          .eq('tenant_id', profile.tenant_id)
           .order('created_at', { ascending: false })
 
         setTransfers(transferData || [])
@@ -121,7 +119,6 @@ export default function TransfersPage() {
             product_families(name, brand)
           `)
           .eq('is_active', true)
-          .eq('tenant_id', profile.tenant_id)
 
         // Load stock levels to check availability
         const { data: stockData } = await supabase

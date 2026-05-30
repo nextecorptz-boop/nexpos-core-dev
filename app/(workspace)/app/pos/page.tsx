@@ -116,13 +116,11 @@ export default function POSPage() {
           .from('product_families')
           .select('id, name, brand, category_id, category:product_categories(name)')
           .eq('is_active', true)
-          .eq('tenant_id', activeTenantId)
 
         const { data: variants } = await supabase
           .from('product_variants')
           .select('*')
           .eq('is_active', true)
-          .eq('tenant_id', activeTenantId)
 
         const { data: stocks } = await supabase
           .from('current_stock')
