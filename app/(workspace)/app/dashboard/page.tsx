@@ -15,6 +15,13 @@ import {
 import Link from 'next/link'
 import { forecastRevenue } from '@/lib/domain/forecast'
 import { NxKpiCard } from '@/components/workspace/ui/nx-kpi-card'
+import dynamic from 'next/dynamic'
+import { Skeleton } from '@/components/ui/skeleton'
+
+const RevenueChart = dynamic(() => import('@/components/charts/revenue-chart'), {
+  ssr: false,
+  loading: () => <Skeleton className="w-full h-full min-h-[250px] bg-nx-elevated/50" />
+})
 
 export const dynamic = 'force-dynamic'
 
@@ -155,8 +162,16 @@ export default async function DashboardPage() {
               <button className="px-3 py-1 text-[11px] font-medium rounded-[6px] text-nx-text-sec hover:text-nx-text transition-colors">Month</button>
             </div>
           </div>
-          <div className="flex-1 flex items-center justify-center border border-dashed border-nx-border/50 rounded-nx-card bg-nx-elevated/30">
-            <p className="font-ui text-nx-text-muted text-[12px]">Chart component rendering...</p>
+          <div className="flex-1 min-h-[250px]">
+            <RevenueChart data={[
+              { date: 'Mon', revenue: todaysRevenue * 0.4 },
+              { date: 'Tue', revenue: todaysRevenue * 0.6 },
+              { date: 'Wed', revenue: todaysRevenue * 0.8 },
+              { date: 'Thu', revenue: todaysRevenue * 0.5 },
+              { date: 'Fri', revenue: todaysRevenue * 1.2 },
+              { date: 'Sat', revenue: todaysRevenue * 1.5 },
+              { date: 'Sun', revenue: todaysRevenue }
+            ]} height={250} />
           </div>
         </div>
 
