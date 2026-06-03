@@ -506,7 +506,7 @@ export function TelemetryDashboard() {
                     </td>
                     <td className="p-3 font-semibold whitespace-nowrap">
                       <span className={`px-2 py-0.5 rounded-[4px] text-[10px] font-bold uppercase ${
-                        log.level === 'critical' ? 'bg-red-500/10 text-red-600 border border-red-200' :
+                        log.level === 'critical' ? 'bg-red-500/10 text-red-500 border border-red-500/20' :
                         log.level === 'error' ? 'bg-orange-500/10 text-orange-600' :
                         log.level === 'warn' ? 'bg-yellow-500/10 text-yellow-600' :
                         'bg-blue-500/10 text-blue-600'
@@ -544,7 +544,7 @@ export function TelemetryDashboard() {
       {activeTab === 'quarantine' && (
         <div className="flex flex-col gap-4 min-h-[300px]">
           {quarantined.length > 0 && (
-            <div className="bg-red-50 border border-red-200 text-red-800 rounded-nx-card p-4 flex gap-2.5 items-start">
+            <div className="bg-red-500/10 border border-red-500/20 text-red-500 rounded-nx-card p-4 flex gap-2.5 items-start">
               <ShieldAlert className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
               <div>
                 <h4 className="font-bold text-[13px]">Conflict Quarantine Queue Active</h4>
@@ -561,7 +561,7 @@ export function TelemetryDashboard() {
               <div key={item.id} className="border border-nx-border rounded-nx-card p-4 space-y-4 hover:border-nx-cyan/50 transition-all select-text">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <span className="px-2 py-0.5 rounded-[4px] text-[10px] font-bold uppercase bg-red-100 text-red-700">
+                    <span className="px-2 py-0.5 rounded-[4px] text-[10px] font-bold uppercase bg-red-500/20 text-red-400">
                       {item.type} Mutation
                     </span>
                     <h4 className="font-bold text-[13px] text-nx-text mt-1.5">
@@ -584,7 +584,7 @@ export function TelemetryDashboard() {
                     <button
                       disabled={isLoading}
                       onClick={() => handleDiscardQuarantine(item.id)}
-                      className="flex items-center gap-1.5 border border-red-200 hover:bg-red-50 text-red-600 font-semibold text-[11px] px-3 py-1.5 rounded transition-colors disabled:opacity-50"
+                      className="flex items-center gap-1.5 border border-red-500/20 hover:bg-red-500/10 text-red-500 font-semibold text-[11px] px-3 py-1.5 rounded transition-colors disabled:opacity-50"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                       Discard
@@ -896,7 +896,7 @@ export function TelemetryDashboard() {
                   <div className="flex justify-between items-center border-b border-nx-border/40 pb-2">
                     <span className="text-nx-text-sec">Certificate Status</span>
                     <span className={`px-2 py-0.5 rounded-[4px] text-[10px] font-bold uppercase ${
-                      cert.status === 'active' ? 'bg-nx-green/10 text-nx-green border border-nx-green/20' : 'bg-red-500/10 text-red-600'
+                      cert.status === 'active' ? 'bg-nx-green/10 text-nx-green border border-nx-green/20' : 'bg-red-500/10 text-red-500'
                     }`}>
                       {cert.status}
                     </span>
