@@ -7,7 +7,7 @@
 //   Function: jwt-claims-hook
 //
 // This function runs on EVERY login and token refresh.
-// It injects tenant_id, role, and branch_id into the JWT.
+// It injects tenant_id, role, branch_id, and is_active into the JWT.
 // These claims are read by RLS helper functions like auth.current_tenant(),
 // auth.current_role(), and auth.current_branch().
 //
@@ -15,16 +15,25 @@
 //   Input:  { user_id: string, claims: object, authentication_method: string }
 //   Output: { claims: object }
 //
+// SECURITY:
+//   AUTH_HOOK_SECRET is set in Supabase Project Secrets (v1,whsec_... format).
+//   The Dashboard hook is configured to send this as an HMAC signature via
+//   StandardWebhooks headers (webhook-id, webhook-timestamp, webhook-signature).
+//   If the secret is not set, the hook runs without signature verification
+//   (safe for local dev; not recommended for production).
+//
 // CRITICAL RULES:
 // 1. This function MUST be fast (<500ms). It blocks login.
 // 2. NEVER throw unhandled errors — a crash here locks all users out.
 // 3. Read ONLY from profiles table. No other queries.
 // 4. Must return { claims: {...} } — NOT { session: { custom_claims: {...} } }
+// 5. NEVER write to auth.users or auth.identities.
 // =============================================================================
 
 import { createClient } from 'jsr:@supabase/supabase-js@2';
+import { Webhook } from 'https://esm.sh/standardwebhooks@1.0.0';
 
-// Keep these types in sync with your DB schema and user object.
+// Keep these types in sync with your DB schema.
 interface ProfileRow {
   tenant_id: string;
   role: 'owner' | 'manager' | 'cashier' | 'viewer';
@@ -33,41 +42,57 @@ interface ProfileRow {
 }
 
 // Supabase Custom Access Token Hook — exact payload contract
-interface HookRequest {
+interface HookPayload {
   user_id: string;
   claims: Record<string, unknown>;
   authentication_method: string;
 }
 
 Deno.serve(async (req: Request): Promise<Response> => {
-  // 1. Overall safety net to prevent locking users out
+  // 1. Overall safety net — any unhandled error must not lock users out
   try {
     if (req.method !== 'POST') {
       return new Response('Method Not Allowed', { status: 405 });
     }
 
-    // NOTE: No Authorization header check here.
-    // This hook is called by Supabase Auth's internal infrastructure only.
-    // It is protected by:
-    //   a) verify_jwt = false in supabase/config.toml (not publicly callable)
-    //   b) The hook URL being registered exclusively in the Supabase Dashboard
-    // Adding a shared secret requires Dashboard UI configuration:
-    //   Dashboard → Authentication → Hooks → Custom Access Token → Authorization header
+    // 2. Read raw body (needed for HMAC signature verification)
+    const rawBody = await req.text();
 
-    let hookRequest: HookRequest;
+    // 3. StandardWebhooks signature verification (when AUTH_HOOK_SECRET is set)
+    //    Secret format: v1,whsec_<base64-encoded-secret>
+    //    Configured in: Dashboard → Authentication → Hooks → Custom Access Token
+    //    Set via: supabase secrets set AUTH_HOOK_SECRET="v1,whsec_..."
+    const authHookSecret = Deno.env.get('AUTH_HOOK_SECRET');
+    if (authHookSecret) {
+      try {
+        const base64Secret = authHookSecret.replace('v1,whsec_', '');
+        const wh = new Webhook(base64Secret);
+        // verify() throws if signature is invalid
+        wh.verify(rawBody, Object.fromEntries(req.headers));
+      } catch (verifyErr) {
+        const err = verifyErr as Error;
+        console.error('[jwt-claims-hook] Webhook signature verification failed:', err.message);
+        return new Response('Unauthorized', { status: 401 });
+      }
+    } else {
+      console.warn('[jwt-claims-hook] AUTH_HOOK_SECRET not set — running without signature verification');
+    }
+
+    // 4. Parse payload
+    let hookPayload: HookPayload;
     try {
-      hookRequest = await req.json();
+      hookPayload = JSON.parse(rawBody);
     } catch {
       return new Response('Invalid JSON body', { status: 400 });
     }
 
-    const { user_id, claims } = hookRequest;
+    const { user_id, claims } = hookPayload;
     if (!user_id) {
       console.error('[jwt-claims-hook] Missing user_id in request payload');
       return new Response('Missing user_id', { status: 400 });
     }
 
-    // 2. Use service_role client for server-side operations
+    // 5. Service-role Supabase client for profile lookup
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
@@ -79,14 +104,14 @@ Deno.serve(async (req: Request): Promise<Response> => {
       }
     );
 
-    // 3. Fetch user profile with a single, fast query
+    // 6. Fetch user profile — single fast query
     const { data: profile, error } = await supabase
       .from('profiles')
       .select('tenant_id, role, branch_id, is_active')
       .eq('id', user_id)
       .single<ProfileRow>();
 
-    // 4. Handle errors during profile fetch — return unmodified claims so login succeeds
+    // 7. DB error — return unmodified claims so login still succeeds
     if (error) {
       console.error(`[jwt-claims-hook] DB error for user ${user_id}:`, error.message);
       return new Response(JSON.stringify({ claims }), {
@@ -95,7 +120,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
       });
     }
 
-    // 5. Handle missing profile or deactivated user — return unmodified claims
+    // 8. Missing or inactive profile — return unmodified claims
     if (!profile || !profile.is_active) {
       if (!profile) {
         console.warn(`[jwt-claims-hook] No profile found for user: ${user_id}`);
@@ -108,7 +133,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
       });
     }
 
-    // 6. Happy path: inject tenant claims into the JWT
+    // 9. Happy path — inject NEXPOS tenant claims into JWT
     const updatedClaims = {
       ...claims,
       tenant_id: profile.tenant_id,
@@ -117,7 +142,10 @@ Deno.serve(async (req: Request): Promise<Response> => {
       is_active: profile.is_active,
     };
 
-    console.log(`[jwt-claims-hook] Claims injected for user ${user_id}: tenant=${profile.tenant_id} role=${profile.role}`);
+    console.log(
+      `[jwt-claims-hook] Claims injected for user ${user_id}: ` +
+      `tenant=${profile.tenant_id} role=${profile.role} branch=${profile.branch_id ?? 'null'}`
+    );
 
     return new Response(JSON.stringify({ claims: updatedClaims }), {
       status: 200,
@@ -125,18 +153,11 @@ Deno.serve(async (req: Request): Promise<Response> => {
     });
 
   } catch (e) {
-    // 7. Final catch-all to guarantee a response — return empty claims modification
-    // so Auth can still issue a token (no user lockout)
+    // 10. Catch-all — never crash the Auth flow
     const err = e as Error;
     console.error('[jwt-claims-hook] CRITICAL Unhandled Exception:', err.message);
-
-    // We don't have the original claims here, so return minimal valid structure
-    // Auth will still issue the token with its default claims
     return new Response(JSON.stringify({
-      error: {
-        http_code: 500,
-        message: 'Internal hook error',
-      }
+      error: { http_code: 500, message: 'Internal hook error' },
     }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
