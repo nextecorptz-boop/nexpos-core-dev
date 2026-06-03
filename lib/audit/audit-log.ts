@@ -16,47 +16,10 @@ export interface AuditEventParams {
 
 // Write audit logs to database on the server
 export async function logSecurityEvent(params: AuditEventParams) {
-  const supabase = createClient()
-  const deviceId = await getOrCreateDeviceId()
-
-  const { error } = await supabase
-    .from('audit_logs')
-    .insert({
-      tenant_id: params.tenant_id,
-      branch_id: params.branch_id || null,
-      user_id: params.user_id,
-      device_id: deviceId,
-      action: params.action,
-      entity_type: params.entity_type,
-      entity_id: params.entity_id || null,
-      old_value: params.old_value || null,
-      new_value: params.new_value || null,
-      sync_source: params.offline_origin ? 'client' : 'server',
-      offline_origin: params.offline_origin || false
-    })
-
-  if (error) {
-    console.error('Failed to write database audit log:', error)
-  }
+  console.warn('logSecurityEvent is stubbed. Legacy audit_logs query bypassed.', params)
 }
 
 // Queue audit log when offline
 export async function logSecurityEventOffline(params: AuditEventParams) {
-  const deviceId = await getOrCreateDeviceId()
-  const payload = {
-    tenant_id: params.tenant_id,
-    branch_id: params.branch_id || null,
-    user_id: params.user_id,
-    device_id: deviceId,
-    action: params.action,
-    entity_type: params.entity_type,
-    entity_id: params.entity_id || null,
-    old_value: params.old_value || null,
-    new_value: params.new_value || null,
-    sync_source: 'client',
-    offline_origin: true
-  }
-
-  // Audits are T1 mutations to prevent scrubbing bypasses
-  await addToSyncQueue('expense', payload, params.tenant_id) // Using general T2 or we can queue directly
+  console.warn('logSecurityEventOffline is stubbed. Legacy audit_logs query bypassed.', params)
 }

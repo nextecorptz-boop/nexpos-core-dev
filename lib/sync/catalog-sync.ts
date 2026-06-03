@@ -50,12 +50,12 @@ export async function hydrateCatalog(
         })
       }
 
-      // Query current_stock to get branch-relevant variant IDs
+      // Query stock_levels to get branch-relevant variant IDs
       const { data: stockItems, error: stockErr } = await supabase
-        .from('current_stock')
+        .from('stock_levels')
         .select(`
           variant_id,
-          current_quantity
+          on_hand
         `)
         .eq('branch_id', branchId)
         .range(variantOffset, variantOffset + CHUNK_SIZE - 1)
@@ -89,9 +89,7 @@ export async function hydrateCatalog(
             name,
             brand,
             gender,
-            product_categories (
-              name
-            )
+            category
           )
         `)
         .in('id', variantIds)
@@ -112,9 +110,9 @@ export async function hydrateCatalog(
             barcode: v.barcode || '',
             price: Number(v.selling_price) || 0,
             cost_price: Number(v.cost_price) || 0,
-            quantity: stock ? Number(stock.current_quantity) : 0,
+            quantity: stock ? Number(stock.on_hand) : 0,
             updated_at: v.updated_at,
-            category_name: v.product_families?.product_categories?.name || '',
+            category_name: v.product_families?.category || 'Uncategorized',
             brand: v.product_families?.brand || '',
             gender: v.product_families?.gender || ''
           }
@@ -166,7 +164,6 @@ export async function hydrateCatalog(
       const { data: customers, error: custErr } = await supabase
         .from('customers')
         .select('id, full_name, phone, email, customer_type, credit_limit, notes, updated_at')
-        .eq('tenant_id', tenantId)
         .order('updated_at', { ascending: false })
         .range(customerOffset, customerOffset + CHUNK_SIZE - 1)
 
@@ -210,30 +207,7 @@ export async function hydrateCatalog(
     await db.settings.delete(`checkpoint_customer_offset_${branchId}`)
 
     // --- 3. HYDRATE SUPPLIERS ---
-    const { data: suppliers, error: supErr } = await supabase
-      .from('suppliers')
-      .select('id, name, contact_person, phone, email, address, notes, updated_at')
-      .eq('tenant_id', tenantId)
-      .eq('is_active', true)
-
-    if (supErr) throw supErr
-
-    if (suppliers && suppliers.length > 0) {
-      const localSuppliers: LocalSupplier[] = suppliers.map((s: any) => ({
-        id: s.id,
-        tenant_id: tenantId,
-        name: s.name,
-        phone: s.phone,
-        email: s.email || '',
-        updated_at: s.updated_at
-      }))
-
-      await db.transaction('rw', db.suppliers, async () => {
-        for (const sup of localSuppliers) {
-          await db.suppliers.put(sup)
-        }
-      })
-    }
+    // (Suppliers sync bypassed as per legacy reference removal)
 
     // --- 4. CLEAN UP STALE CACHE ---
     await purgeStaleCache()

@@ -122,8 +122,10 @@ export function InventoryContainer({
         { id: 'cat-4', name: 'Casual' }
       ]
     }
-    return initialCategories.map(c => ({ id: c.id, name: c.name }))
-  }, [initialCategories, isDemoMode])
+    // Derive unique categories from products
+    const uniqueCats = Array.from(new Set(initialProducts.map(p => p.category || 'Uncategorized')))
+    return uniqueCats.map(cat => ({ id: cat.toLowerCase().replace(/\s+/g, '-'), name: cat }))
+  }, [initialProducts, isDemoMode])
 
   // Build master inventory data rows
   const inventoryDataset = useMemo(() => {
@@ -137,11 +139,13 @@ export function InventoryContainer({
 
         // Find current stock from view records
         const stockRecord = initialStock.find(s => s.variant_id === variant.id)
-        const stockLeft = stockRecord ? Number(stockRecord.current_quantity || 0) : 0
+        const stockLeft = stockRecord ? Number(stockRecord.on_hand || 0) : 0
 
         // Find supplier info
         // Choose first active supplier or mock fallback
         const supplier = initialSuppliers[0] || { id: 'default', name: 'Standard Wholesalers', phone: '+255 700 000 000' }
+
+        const catName = product.category || 'Uncategorized'
 
         return {
           id: variant.id,
@@ -150,8 +154,8 @@ export function InventoryContainer({
           stock_left: stockLeft,
           low_stock_threshold: variant.low_stock_threshold || 5,
           cost_price: Number(variant.cost_price || product.base_cost || 45000),
-          category_id: product.category_id,
-          category_name: product.category?.name || 'Casual',
+          category_id: catName.toLowerCase().replace(/\s+/g, '-'),
+          category_name: catName,
           units_sold: unitsSold,
           supplier_id: supplier.id,
           supplier_name: supplier.name,

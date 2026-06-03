@@ -6,7 +6,7 @@ export const getSalesSummary = cache(async (startDate: string, endDate: string, 
   
   let query = supabase
     .from('sales')
-    .select('id, total_amount, sale_date, status, sale_items(subtotal, cost_price, quantity)')
+    .select('id, total_amount, sale_date, status, sale_lines(subtotal, cost_price, quantity)')
     .gte('sale_date', startDate)
     .lte('sale_date', endDate)
     .eq('status', 'completed')
@@ -25,7 +25,7 @@ export const getSalesSummary = cache(async (startDate: string, endDate: string, 
   const revenue = data.reduce((sum, sale) => sum + Number(sale.total_amount), 0)
   const orders = data.length
   const profit = data.reduce((sum, sale) => {
-    const saleProfit = sale.sale_items?.reduce((itemSum: number, item: any) => {
+    const saleProfit = sale.sale_lines?.reduce((itemSum: number, item: any) => {
       return itemSum + (Number(item.subtotal) - (Number(item.cost_price) * Number(item.quantity)))
     }, 0) || 0
     return sum + saleProfit
@@ -38,7 +38,7 @@ export const getTopProducts = cache(async (startDate: string, endDate: string, b
   const supabase = await createClient()
   
   let query = supabase
-    .from('sale_items')
+    .from('sale_lines')
     .select(`
       quantity,
       subtotal,
@@ -93,9 +93,9 @@ export const getInventoryValuation = cache(async (branchId?: string) => {
   const supabase = await createClient()
   
   let query = supabase
-    .from('current_stock')
+    .from('stock_levels')
     .select(`
-      current_quantity,
+      on_hand,
       product_variants(
         id,
         cost_price,
@@ -119,7 +119,7 @@ export const getInventoryValuation = cache(async (branchId?: string) => {
   let totalRetailValue = 0
 
   const items = data.map((item: any) => {
-    const qty = Number(item.current_quantity)
+    const qty = Number(item.on_hand)
     const cost = Number(item.product_variants?.cost_price || 0)
     const retail = Number(item.product_variants?.base_price || 0)
 

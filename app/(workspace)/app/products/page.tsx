@@ -9,14 +9,11 @@ export default async function ProductsPage() {
 
   const { data: products } = await supabase
     .from('product_families')
-    .select('*, category:product_categories(name), variants:product_variants(count)')
+    .select('*, variants:product_variants(count)')
     .eq('is_active', true)
     .order('name')
 
-  const { data: categories } = await supabase
-    .from('product_categories')
-    .select('*')
-    .order('name')
+  const categories = Array.from(new Set((products || []).map(p => p.category).filter(Boolean)))
 
   return (
     <div>
@@ -77,7 +74,7 @@ export default async function ProductsPage() {
                 {products.map((product: any) => (
                   <tr key={product.id} className="border-b border-nx-border/50 hover:bg-nx-surface/30 transition-colors">
                     <td className="py-4 px-4 text-nx-text font-medium">{product.name}</td>
-                    <td className="py-4 px-4 text-nx-text-sec">{product.category?.name || '-'}</td>
+                    <td className="py-4 px-4 text-nx-text-sec">{product.category || '-'}</td>
                     <td className="py-4 px-4 text-nx-text-sec">{product.brand || '-'}</td>
                     <td className="py-4 px-4">
                       <span className="inline-block bg-nx-gold/10 text-nx-gold px-3 py-1 text-xs font-label uppercase tracking-wider">

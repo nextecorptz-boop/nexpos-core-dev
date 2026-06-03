@@ -33,7 +33,7 @@ export default async function DashboardPage() {
   
   const { data: todaySales, count: todaySalesCount } = await supabase
     .from('sales')
-    .select('id, total_amount, sale_items(subtotal, cost_price, quantity)', { count: 'exact' })
+    .select('id, total_amount, sale_lines(line_total, unit_cost, quantity)', { count: 'exact' })
     .gte('sale_date', today)
     .eq('status', 'completed')
 
@@ -42,8 +42,8 @@ export default async function DashboardPage() {
   const avgOrder = orders > 0 ? todaysRevenue / orders : 0
   
   const grossProfit = todaySales?.reduce((sum, sale) => {
-    const itemsProfit = sale.sale_items?.reduce((itemSum: number, item: any) => {
-      return itemSum + (Number(item.subtotal) - (Number(item.cost_price) * Number(item.quantity)))
+    const itemsProfit = sale.sale_lines?.reduce((itemSum: number, item: any) => {
+      return itemSum + (Number(item.line_total) - (Number(item.unit_cost) * Number(item.quantity)))
     }, 0) || 0
     return sum + itemsProfit
   }, 0) || 0
@@ -66,21 +66,13 @@ export default async function DashboardPage() {
     .order('sale_date', { ascending: false })
     .limit(10)
 
-  // Fetch Cash Sessions for reconciliation metrics
-  const { data: rawSessions } = await supabase
-    .from('cash_sessions')
-    .select('variance, status')
+  // Fetch Cash Sessions for reconciliation metrics (Stubbed for Phase 5B)
+  const openSessionsCount = 0
+  const totalVarianceVal = 0
 
-  const openSessionsCount = rawSessions?.filter(s => s.status === 'open').length || 0
-  const totalVarianceVal = rawSessions?.reduce((sum, s) => sum + Number(s.variance || 0), 0) || 0
-
-  // Fetch credit accounts for outstanding balance metrics
-  const { data: creditAccounts } = await supabase
-    .from('credit_accounts')
-    .select('balance_due, due_date, status')
-
-  const activeCreditAccounts = creditAccounts?.filter(a => a.status === 'active') || []
-  const totalOutstandingCredit = activeCreditAccounts.reduce((sum, a) => sum + Number(a.balance_due), 0)
+  // Fetch credit accounts for outstanding balance metrics (Stubbed for Phase 5B)
+  const activeCreditAccounts: any[] = []
+  const totalOutstandingCredit = 0
 
   // AI Advisory projections
   const monthlyProjectedRevenue = forecastRevenue(todaysRevenue * 30, 1.05)

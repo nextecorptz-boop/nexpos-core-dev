@@ -1,0 +1,273 @@
+﻿C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(public)\page.tsx:38: 'Offline-first checkout terminal built for tablet hardware. Processes sales, payments, and receipts with sub-100ms local response — even with zero network connectivity. Syncs atomically when connection resumes.',
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(public)\page.tsx:61: id: 'payments',
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(public)\page.tsx:66: 'Reconcile M-Pesa, Tigo Pesa, and other mobile money payments automatically. Match incoming transaction references against open sale records and surface discrepancies without manual intervention.',
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\control-center\control-center-container.tsx:19: initialExpenses: any[]
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\control-center\control-center-container.tsx:29: initialExpenses,
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\control-center\control-center-container.tsx:48: const DEMO_EXPENSES_TOTAL = 850000
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\control-center\control-center-container.tsx:56: const dailyBurn = DEMO_EXPENSES_TOTAL / 30
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\control-center\control-center-container.tsx:72: const totalExpenses = initialExpenses.reduce((sum, e) => sum + Number(e.amount), 0)
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\control-center\control-center-container.tsx:73: const dailyBurn = totalExpenses / 30
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\control-center\control-center-container.tsx:74: const cashRunway = forecastCashRunway(totalSales - totalExpenses, dailyBurn)
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\control-center\control-center-container.tsx:88: }, [initialSales, initialExpenses, initialCreditAccounts, initialSessions, isDemoMode])
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\control-center\page.tsx:24: .from('current_stock')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\control-center\page.tsx:32: // 4. Fetch expenses
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\control-center\page.tsx:33: const { data: expenses } = await supabase
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\control-center\page.tsx:34: .from('expenses')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\control-center\page.tsx:39: .from('credit_accounts')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\control-center\page.tsx:45: .from('cash_sessions')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\control-center\page.tsx:60: initialExpenses={expenses || []}
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\credit\credit-container.tsx:12: initialRepayments: any[]
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\credit\credit-container.tsx:18: initialRepayments,
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\credit\credit-container.tsx:91: const DEMO_REPAYMENTS = useMemo(() => [
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\credit\credit-container.tsx:125: const repayments = isDemoMode ? DEMO_REPAYMENTS : initialRepayments
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\credit\credit-container.tsx:225: // Selected Account Repayments
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\credit\credit-container.tsx:226: const selectedAccountRepayments = useMemo(() => {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\credit\credit-container.tsx:228: return repayments.filter(r => r.credit_account_id === selectedAccount.id)
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\credit\credit-container.tsx:229: }, [repayments, selectedAccount])
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\credit\credit-container.tsx:304: No customer credit logs exist in the live database. NEXPOS is displaying mock debt accounts for evaluation. Checkouts under partial payments automatically populate this screen.
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\credit\credit-container.tsx:317: Track customer outstanding balances, credit aging bins, and log repayments offline-safely
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\credit\credit-container.tsx:532: {/* Repayments History timeline */}
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\credit\credit-container.tsx:534: <h4 className="text-[11px] font-bold text-nx-text-muted uppercase tracking-wider">Repayments History</h4>
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\credit\credit-container.tsx:541: {selectedAccountRepayments.length > 0 ? (
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\credit\credit-container.tsx:542: selectedAccountRepayments.map((rep: any) => (
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\credit\credit-container.tsx:557: No repayments recorded yet
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\credit\credit-container.tsx:566: Select a customer from the ledger to view repayment timeline and process payments.
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:8: import { detectExpenseSpike } from '@/lib/domain/risk'
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:10: interface ExpensesContainerProps {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:11: initialExpenses: any[]
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:17: export function ExpensesContainer({
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:18: initialExpenses,
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:22: }: ExpensesContainerProps) {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:23: const isDemoMode = initialExpenses.length === 0
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:42: { id: 'dcat-5', name: 'Other Expenses' }
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:45: const DEMO_EXPENSES = useMemo(() => [
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:87: const expenses = isDemoMode ? DEMO_EXPENSES : initialExpenses
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:99: // Filter expenses list
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:100: const filteredExpenses = useMemo(() => {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:101: return expenses.filter(exp => {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:114: }, [expenses, selectedCategoryFilter, searchQuery])
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:118: const totalAmount = expenses.reduce((sum, e) => sum + Number(e.amount), 0)
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:124: const expenseRatio = calculateExpenseRatio(sales, expenses)
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:128: const catExpenses = expenses.filter(e => e.category_id === cat.id)
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:129: const amount = catExpenses.reduce((sum, e) => sum + Number(e.amount), 0)
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:138: const monthlyAverage = totalAmount / (expenses.length || 1)
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:139: const recentExpenseSpike = expenses.length > 0 && detectExpenseSpike(Number(expenses[0].amount), monthlyAverage)
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:146: recentExpenseSpike
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:148: }, [expenses, categories, sales])
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:152: // Group expenses by date (last 7 days)
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:160: const dayExpenses = expenses.filter(e => e.expense_date === date)
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:161: const total = dayExpenses.reduce((sum, e) => sum + Number(e.amount), 0)
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:174: }, [expenses])
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:205: expenses.unshift({
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:235: No business expenses recorded in the database. NEXPOS is presenting pre-populated operational outlays for showcase. Click "Record Expense" to register matumizi offline-safely.
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:264: <span className="text-[11px] font-bold text-nx-text-sec uppercase tracking-wider">Total Expenses (30 Days)</span>
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:268: <span className="text-[10px] text-nx-text-muted mt-1">Sum of logged expenses</span>
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:269: {metrics.recentExpenseSpike && (
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:393: {/* Zone 3 — Expenses Table (Horizontal scroll, sticky column) */}
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:434: {filteredExpenses.map(exp => (
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\expenses-container.tsx:451: {filteredExpenses.length === 0 && (
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\page.tsx:3: export default function ExpensesPage() {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\expenses\page.tsx:4: return <ComingSoonPlaceholder moduleName="Expenses" />
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\inventory\inventory-container.tsx:94: initialSuppliers: any[]
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\inventory\inventory-container.tsx:103: initialSuppliers,
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\inventory\inventory-container.tsx:146: const supplier = initialSuppliers[0] || { id: 'default', name: 'Standard Wholesalers', phone: '+255 700 000 000' }
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\inventory\inventory-container.tsx:166: }, [initialProducts, initialStock, initialSaleItems, initialSuppliers, isDemoMode])
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\inventory\inventory-container.tsx:239: ? 'Purchase order draft successfully generated! Navigate to the Purchases page to review and submit.'
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\inventory\inventory-container.tsx:260: No product stock records exist in the database. NEXPOS is displaying mock inventory levels for showcase purposes. Go to the POS terminal or Purchases tab to update stock quantities.
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\inventory\inventory-container.tsx:279: href="/app/purchases"
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\inventory\page.tsx:43: // 5. Fetch suppliers
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\inventory\page.tsx:44: const { data: suppliers } = await supabase
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\inventory\page.tsx:45: .from('suppliers')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\inventory\page.tsx:55: initialSuppliers={suppliers || []}
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\notifications\notifications-container.tsx:45: actionUrl: `/app/purchases?supplierId=${item.supplier_id}&variantId=${item.id}&quantity=${Math.max(15, item.low_stock_threshold * 3)}`,
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\notifications\page.tsx:24: .from('current_stock')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\notifications\page.tsx:28: .from('sale_items')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\notifications\page.tsx:57: .from('credit_accounts')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\notifications\page.tsx:81: .from('cash_sessions')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\orders\orders-container.tsx:23: payments: [{ payment_method: 'mobile_money', amount: 145000, reference_code: 'MP-89102' }],
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\orders\orders-container.tsx:24: sale_items: [
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\orders\orders-container.tsx:53: payments: [{ payment_method: 'cash', amount: 30000, reference_code: '' }],
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\orders\orders-container.tsx:54: sale_items: [
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\orders\orders-container.tsx:76: payments: [],
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\orders\orders-container.tsx:77: sale_items: [
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\orders\orders-container.tsx:99: payments: [],
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\orders\orders-container.tsx:100: sale_items: [
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\orders\orders-container.tsx:194: const paymentMethod = sale.payments?.[0]?.payment_method || 'N/A'
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\orders\page.tsx:27: payments(payment_method, amount, reference_code),
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\orders\page.tsx:28: sale_items(
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\pos\page.tsx:88: .from('cash_sessions')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\products\quick-add\page.tsx:43: .from('product_categories')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\products\quick-add\page.tsx:136: await supabase.from('inventory_movements').insert(stockMovements)
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\products\page.tsx:12: .select('*, category:product_categories(name), variants:product_variants(count)')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\products\page.tsx:17: .from('product_categories')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\purchases\page.tsx:3: export default function PurchasesPage() {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\purchases\page.tsx:4: return <ComingSoonPlaceholder moduleName="Purchases" />
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\purchases\purchases-container.tsx:6: import { PurchaseBuilder } from '@/components/workspace/purchases/purchase-builder'
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\purchases\purchases-container.tsx:10: interface PurchasesContainerProps {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\purchases\purchases-container.tsx:11: suppliers: any[]
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\purchases\purchases-container.tsx:16: export function PurchasesContainer({
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\purchases\purchases-container.tsx:17: suppliers,
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\purchases\purchases-container.tsx:20: }: PurchasesContainerProps) {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\purchases\purchases-container.tsx:22: const isDemoMode = suppliers.length === 0
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\purchases\purchases-container.tsx:114: const demoSuppliers = isDemoMode
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\purchases\purchases-container.tsx:119: : suppliers
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\purchases\purchases-container.tsx:151: No suppliers or products exist in the database. NEXPOS is displaying mock inventories for purchase calculations. Populate products to start receiving live stocks.
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\purchases\purchases-container.tsx:164: Generate draft orders, submit to suppliers, and lock incoming stock
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\purchases\purchases-container.tsx:171: suppliers={demoSuppliers}
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\sales\items\page.tsx:13: .from('product_categories')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\sales\items\page.tsx:23: category:product_categories(name),
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\sales\items\page.tsx:36: .from('sale_items')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\sales\items\page.tsx:41: .from('current_stock')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\sales\trends\page.tsx:19: .from('sale_items')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\sales\trends\page.tsx:31: category:product_categories(id, name)
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\security-log\page.tsx:96: .from('audit_logs')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\security-log\page.tsx:358: <option value="dispatch_transfer">Transfers</option>
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\suppliers\page.tsx:3: export default function SuppliersPage() {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\suppliers\page.tsx:4: return <ComingSoonPlaceholder moduleName="Suppliers" />
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\suppliers\suppliers-container.tsx:5: import { SupplierCard } from '@/components/workspace/suppliers/supplier-card'
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\suppliers\suppliers-container.tsx:9: const DEMO_SUPPLIERS = [
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\suppliers\suppliers-container.tsx:40: interface SuppliersContainerProps {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\suppliers\suppliers-container.tsx:41: initialSuppliers: any[]
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\suppliers\suppliers-container.tsx:42: initialPurchases: any[]
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\suppliers\suppliers-container.tsx:45: export function SuppliersContainer({ initialSuppliers, initialPurchases }: SuppliersContainerProps) {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\suppliers\suppliers-container.tsx:46: const isDemoMode = initialSuppliers.length === 0
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\suppliers\suppliers-container.tsx:47: const suppliersDataset = isDemoMode ? DEMO_SUPPLIERS : initialSuppliers
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\suppliers\suppliers-container.tsx:52: const [selectedSupplierId, setSelectedSupplierId] = useState<string>(suppliersDataset[0]?.id || '')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\suppliers\suppliers-container.tsx:64: // Filter suppliers list
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\suppliers\suppliers-container.tsx:65: const filteredSuppliers = useMemo(() => {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\suppliers\suppliers-container.tsx:66: return suppliersDataset.filter(sup => {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\suppliers\suppliers-container.tsx:73: }, [suppliersDataset, searchQuery, isDemoMode])
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\suppliers\suppliers-container.tsx:77: return suppliersDataset.find(sup => sup.id === selectedSupplierId) || suppliersDataset[0]
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\suppliers\suppliers-container.tsx:78: }, [suppliersDataset, selectedSupplierId])
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\suppliers\suppliers-container.tsx:80: // Get purchases for selected supplier
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\suppliers\suppliers-container.tsx:81: const supplierPurchases = useMemo(() => {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\suppliers\suppliers-container.tsx:88: return initialPurchases.filter(p => p.supplier_id === selectedSupplier?.id)
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\suppliers\suppliers-container.tsx:89: }, [initialPurchases, selectedSupplier, isDemoMode])
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\suppliers\suppliers-container.tsx:152: No suppliers are registered in the database. NEXPOS is displaying mock distributors for showcase purposes. Click "Register Supplier" to add suppliers offline-safely.
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\suppliers\suppliers-container.tsx:196: {filteredSuppliers.map(sup => (
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\suppliers\suppliers-container.tsx:205: {filteredSuppliers.length === 0 && (
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\suppliers\suppliers-container.tsx:207: No suppliers registered yet
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\suppliers\suppliers-container.tsx:284: {supplierPurchases.length > 0 ? (
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\suppliers\suppliers-container.tsx:285: supplierPurchases.map((p: any) => (
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\suppliers\suppliers-container.tsx:297: No purchases logged yet
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\till\till-container.tsx:10: initialCashPayments: any[]
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\till\till-container.tsx:18: initialCashPayments,
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\till\till-container.tsx:24: const [cashPayments, setCashPayments] = useState<any[]>(initialCashPayments)
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\till\till-container.tsx:50: return cashPayments
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\till\till-container.tsx:56: }, [openSession, cashPayments])
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\till\till-container.tsx:75: .from('cash_sessions')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\till\till-container.tsx:85: opened_by_user:profiles!cash_sessions_opened_by_fkey(full_name),
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\till\till-container.tsx:86: closed_by_user:profiles!cash_sessions_closed_by_fkey(full_name)
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\till\till-container.tsx:118: .from('cash_sessions')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\till\till-container.tsx:131: opened_by_user:profiles!cash_sessions_opened_by_fkey(full_name),
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\till\till-container.tsx:132: closed_by_user:profiles!cash_sessions_closed_by_fkey(full_name)
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\till\till-container.tsx:400: NEXPOS enforces strict cashier accountability. The drawer starting float is isolated upon clock-in. All sales payments are audited in real-time.
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\transfers\page.tsx:3: export default function TransfersPage() {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\app\(workspace)\app\transfers\page.tsx:4: return <ComingSoonPlaceholder moduleName="Transfers" />
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\actions\transfers.ts:46: // Cashiers are strictly blocked from writing transfers
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\actions\transfers.ts:71: .from('transfers')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\actions\transfers.ts:96: await supabase.from('transfers').delete().eq('id', transfer.id)
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\actions\transfers.ts:100: revalidatePath('/app/transfers')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\actions\transfers.ts:110: .from('transfers')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\actions\transfers.ts:133: revalidatePath('/app/transfers')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\actions\transfers.ts:145: .from('transfers')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\actions\transfers.ts:169: revalidatePath('/app/transfers')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\actions\transfers.ts:178: .from('transfers')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\actions\transfers.ts:201: revalidatePath('/app/transfers')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\audit\audit-log.ts:23: .from('audit_logs')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\auth\permissions.ts:19: 'manage_suppliers',
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\auth\permissions.ts:32: 'manage_suppliers',
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\domain\forecast.ts:10: * Days Remaining = current_stock / average_daily_sales
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\domain\metrics.ts:17: sale_items?: SaleItem[]
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\domain\metrics.ts:42: if (!sale.sale_items || sale.sale_items.length === 0) return 0
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\domain\metrics.ts:43: return sale.sale_items.reduce((sum, item) => {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\domain\metrics.ts:72: * Net Profit = Gross Profit - Operating Expenses
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\domain\metrics.ts:74: export function calculateNetProfit(sales: Sale[], expenses: Expense[]): number {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\domain\metrics.ts:76: const totalExpenses = expenses.reduce((sum, e) => sum + Number(e.amount || 0), 0)
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\domain\metrics.ts:77: return gross - totalExpenses
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\domain\metrics.ts:112: * Calculates ratio of expenses to revenue.
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\domain\metrics.ts:114: export function calculateExpenseRatio(sales: Sale[], expenses: Expense[]): number {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\domain\metrics.ts:117: const totalExpenses = expenses.reduce((sum, e) => sum + Number(e.amount || 0), 0)
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\domain\metrics.ts:118: return (totalExpenses / rev) * 100
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\domain\risk.ts:56: export function detectExpenseSpike(currentAmount: number, historicalAverage: number): boolean {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\queries\reports.ts:9: .select('id, total_amount, sale_date, status, sale_items(subtotal, cost_price, quantity)')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\queries\reports.ts:28: const saleProfit = sale.sale_items?.reduce((itemSum: number, item: any) => {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\queries\reports.ts:41: .from('sale_items')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\queries\reports.ts:96: .from('current_stock')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\catalog-sync.ts:34: // We query from the current_stock view to fetch only variants active in this branch
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\catalog-sync.ts:53: // Query current_stock to get branch-relevant variant IDs
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\catalog-sync.ts:55: .from('current_stock')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\catalog-sync.ts:101: // Map variants and append the quantity from current_stock view
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\catalog-sync.ts:209: // --- 3. HYDRATE SUPPLIERS ---
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\catalog-sync.ts:210: const { data: suppliers, error: supErr } = await supabase
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\catalog-sync.ts:211: .from('suppliers')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\catalog-sync.ts:217: if (suppliers && suppliers.length > 0) {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\catalog-sync.ts:218: const localSuppliers: LocalSupplier[] = suppliers.map((s: any) => ({
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\catalog-sync.ts:227: await db.transaction('rw', db.suppliers, async () => {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\catalog-sync.ts:228: for (const sup of localSuppliers) {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\catalog-sync.ts:229: await db.suppliers.put(sup)
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\commands.ts:45: sale_items: Array<{ variant_id: string; quantity: number; unit_price: number; cost_price: number }>;
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\commands.ts:46: payments: Array<{ payment_method: string; amount: number; reference_code?: string }>;
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\commands.ts:52: if (!this.payload.sale_items || this.payload.sale_items.length === 0) {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\commands.ts:60: for (const item of this.payload.sale_items) {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\commands.ts:72: for (const p of this.payload.payments) {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\commands.ts:108: this.payload.sale_items.forEach((item, index) => {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\commands.ts:131: this.payload.payments.forEach((pay, index) => {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\commands.ts:159: * Dispatches branch inventory transfers.
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\db.ts:120: suppliers!: Table<LocalSupplier, string>;
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\db.ts:121: transfers!: Table<LocalTransfer, string>;
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\db.ts:137: suppliers: 'id, tenant_id, updated_at',
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\db.ts:138: transfers: 'id, from_branch_id, to_branch_id, tenant_id, status, updated_at',
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\db.ts:149: suppliers: 'id, tenant_id, updated_at',
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\db.ts:150: transfers: 'id, from_branch_id, to_branch_id, tenant_id, status, updated_at',
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\db.ts:162: suppliers: 'id, tenant_id, updated_at',
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\db.ts:163: transfers: 'id, from_branch_id, to_branch_id, tenant_id, status, updated_at',
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\db.ts:178: suppliers: 'id, tenant_id, updated_at',
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\db.ts:179: transfers: 'id, from_branch_id, to_branch_id, tenant_id, status, updated_at',
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\db.ts:265: suppliers: 'id, tenant_id, updated_at',
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\db.ts:266: transfers: 'id, from_branch_id, to_branch_id, tenant_id, status, updated_at',
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\offline-backup.ts:21: 'variants', 'customers', 'suppliers', 'settings'
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\projections.ts:13: await db.transaction('rw', [db.variants, db.transfers, db.settings], async () => {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\projections.ts:50: await db.transfers.put(newTransfer);
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\projections.ts:65: const transfer = await db.transfers.get(transferId);
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\projections.ts:69: await db.transfers.put(transfer);
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\projections.ts:102: const shadowTransfers: Map<string, LocalTransfer> = new Map();
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\projections.ts:132: await db.transaction('rw', [db.variants, db.transfers, db.settings], async () => {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\sync-engine.ts:420: if (payload.sale_items && payload.sale_items.length > 0) {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\sync-engine.ts:421: const items = payload.sale_items.map((item: any) => ({
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\sync-engine.ts:430: const { error: itemsErr } = await supabase.from('sale_items').insert(items)
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\sync-engine.ts:434: // Insert payments
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\sync-engine.ts:435: if (payload.payments && payload.payments.length > 0) {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\sync-engine.ts:436: const payments = payload.payments.map((pay: any) => ({
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\sync-engine.ts:443: const { error: payErr } = await supabase.from('payments').insert(payments)
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\sync-engine.ts:451: .from('purchases')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\sync-engine.ts:459: .from('purchases')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\sync-engine.ts:499: const { error: movErr } = await supabase.from('inventory_movements').insert(movements)
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\sync-engine.ts:507: .from('expenses')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\sync-engine.ts:522: .from('payments')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\sync-engine.ts:531: .from('payments')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\sync-engine.ts:546: .from('credit_repayments')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\sync-engine.ts:561: .from('suppliers')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\sync-engine.ts:569: .from('suppliers')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\sync-engine.ts:585: .from('transfers')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\sync\sync-engine.ts:593: .from('transfers')
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\types\database.types.ts:38: product_categories: {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\types\database.types.ts:45: Insert: Omit<Database['public']['Tables']['product_categories']['Row'], 'id' | 'created_at'>
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\types\database.types.ts:46: Update: Partial<Database['public']['Tables']['product_categories']['Insert']>
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\types\database.types.ts:124: expense_categories: {
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\lib\types\database.types.ts:137: Update: Partial<Database['public']['Tables']['expense_categories']['Insert']>
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\components\workspace\purchases\purchase-builder.tsx:7: suppliers: any[]
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\components\workspace\purchases\purchase-builder.tsx:19: suppliers,
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\components\workspace\purchases\purchase-builder.tsx:289: {suppliers.map(sup => (
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\components\workspace\sales\orders-table.tsx:114: desc: `Amount of ${formatCurrency(amountPaid)} settled via ${order.payments?.[0]?.payment_method || 'payment method'}`,
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\components\workspace\sales\orders-table.tsx:196: const payMethod = order.payments?.[0]?.payment_method || 'N/A'
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\components\workspace\sales\orders-table.tsx:372: {selectedOrder.sale_items && selectedOrder.sale_items.length > 0 ? (
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\components\workspace\sales\orders-table.tsx:373: selectedOrder.sale_items.map((item: any) => (
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\components\workspace\workspace-nav.tsx:50: 'Suppliers': 'Wasambazaji',
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\components\workspace\workspace-nav.tsx:51: 'Purchases': 'Manunuzi ya Bidhaa',
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\components\workspace\workspace-nav.tsx:56: 'Expenses': 'Matumizi ya Duka',
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\components\workspace\workspace-nav.tsx:60: 'Transfers': 'Uhamisho wa Stoki',
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\components\workspace\workspace-nav.tsx:121: { name: 'Transfers', href: '/app/transfers', icon: ArrowLeftRight, roles: ['owner', 'manager'] },
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\components\workspace\workspace-nav.tsx:123: { name: 'Suppliers', href: '/app/suppliers', icon: Users, roles: ['owner', 'manager'] },
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\components\workspace\workspace-nav.tsx:124: { name: 'Purchases', href: '/app/purchases', icon: ShoppingBag, roles: ['owner', 'manager'] },
+C:\Users\wise_gtr\Desktop\Demo Websites\NEXPOS\components\workspace\workspace-nav.tsx:131: { name: 'Expenses', href: '/app/expenses', icon: DollarSign, roles: ['owner', 'manager'] },

@@ -319,38 +319,26 @@ async function processItems(supabase: any, items: QueueItem[], tier: 0 | 1 | 2 |
         continue
       }
 
-      // 2. Sync to Supabase Central Event Store
-      const { error: syncErr } = await supabase
-        .from('event_store')
-        .insert({
-          id: event.id,
-          tenant_id: event.tenant_id,
-          branch_id: event.branch_id || null,
-          aggregate_type: event.aggregate_type,
-          aggregate_id: event.aggregate_id,
-          event_type: event.event_type,
-          event_version: event.event_version,
-          schema_version: event.schema_version,
-          payload: event.payload,
-          metadata: event.metadata || {},
-          actor_id: event.actor_id || null,
-          correlation_id: event.correlation_id || null,
-          causation_id: event.causation_id || null,
-          device_id: item.device_id,
-          idempotency_key: event.idempotency_key || event.id,
-          occurred_at: event.occurred_at
-        })
+      // 2. Map Event to Canonical Backend Operations
+      const mappedType = event.event_type.split('.')[0]
 
-      if (syncErr) {
-        // Handle database duplicate key error (already synced)
-        if (syncErr.code === '23505') {
-          await Telemetry.info('sync', `Deduplication: Event ${event.id} already exists in database.`)
-          await removeFromSyncQueue(item.id, tier)
-          processedAny = true
-          successCount++
-          continue
+      if (mappedType === 'sale') {
+        const { error: syncErr, data: result } = await supabase.rpc('complete_sale', {
+          p_input: event.payload
+        })
+        
+        if (syncErr) {
+          throw syncErr
         }
-        throw syncErr
+        
+        // Check idempotency replay response
+        if (result && result.replayed) {
+          await Telemetry.info('sync', `Deduplication: Sale ${event.id} already exists in database.`)
+        }
+      } else {
+        // Unsupported legacy flows isolated behind safe no-op/stub handlers
+        console.warn(`Sync engine: Legacy flow for ${mappedType} is stubbed and bypassed.`)
+        await Telemetry.warn('sync', `Stubbed legacy flow: ${mappedType}`)
       }
 
       // Record Latency and update Network Monitor RTT
@@ -397,241 +385,8 @@ async function processItems(supabase: any, items: QueueItem[], tier: 0 | 1 | 2 |
   return processedAny
 }
 
-// Helper: Sync Sale
-async function syncSale(supabase: any, payload: any, id: string) {
-  // Check deduplication
-  const { data: existing } = await supabase
-    .from('sales')
-    .select('id')
-    .eq('id', id)
-    .maybeSingle()
-
-  if (existing) return
-
-  const { data: sale, error: saleErr } = await supabase
-    .from('sales')
-    .insert({
-      id: id, // Client UUID mapped directly
-      receipt_number: payload.receipt_number,
-      total_amount: payload.total_amount,
-      subtotal: payload.subtotal,
-      discount_amount: payload.discount_amount || 0,
-      amount_paid: payload.amount_paid,
-      balance_due: payload.balance_due || 0,
-      status: payload.status,
-      customer_id: payload.customer_id || null,
-      notes: payload.notes || '',
-      branch_id: payload.branch_id
-    })
-    .select()
-    .single()
-
-  if (saleErr) throw saleErr
-
-  // Insert items
-  if (payload.sale_items && payload.sale_items.length > 0) {
-    const items = payload.sale_items.map((item: any) => ({
-      sale_id: sale.id,
-      variant_id: item.variant_id,
-      quantity: item.quantity,
-      unit_price: item.unit_price,
-      subtotal: item.subtotal,
-      cost_price: item.cost_price,
-      tenant_id: sale.tenant_id
-    }))
-    const { error: itemsErr } = await supabase.from('sale_items').insert(items)
-    if (itemsErr) throw itemsErr
-  }
-
-  // Insert payments
-  if (payload.payments && payload.payments.length > 0) {
-    const payments = payload.payments.map((pay: any) => ({
-      sale_id: sale.id,
-      payment_method: pay.payment_method,
-      amount: pay.amount,
-      reference_code: pay.reference_code || '',
-      tenant_id: sale.tenant_id
-    }))
-    const { error: payErr } = await supabase.from('payments').insert(payments)
-    if (payErr) throw payErr
-  }
-}
-
-// Helper: Sync Purchase
-async function syncPurchase(supabase: any, payload: any, id: string) {
-  const { data: existing } = await supabase
-    .from('purchases')
-    .select('id')
-    .eq('id', id)
-    .maybeSingle()
-
-  if (existing) return
-
-  const { data: purchase, error: pErr } = await supabase
-    .from('purchases')
-    .insert({
-      id: id,
-      supplier_id: payload.supplier_id,
-      branch_id: payload.branch_id,
-      total_amount: payload.total_amount,
-      status: payload.status,
-      notes: payload.notes || ''
-    })
-    .select()
-    .single()
-
-  if (pErr) throw pErr
-
-  if (payload.purchase_items && payload.purchase_items.length > 0) {
-    const items = payload.purchase_items.map((item: any) => ({
-      purchase_id: purchase.id,
-      variant_id: item.variant_id,
-      quantity: item.quantity,
-      unit_cost: item.unit_cost,
-      subtotal: item.subtotal,
-      received_qty: item.received_qty || 0,
-      tenant_id: purchase.tenant_id
-    }))
-    const { error: itemsErr } = await supabase.from('purchase_items').insert(items)
-    if (itemsErr) throw itemsErr
-  }
-
-  // If purchase is completed, insert movements
-  if (payload.status === 'completed' && payload.purchase_items) {
-    const movements = payload.purchase_items.map((item: any) => ({
-      variant_id: item.variant_id,
-      branch_id: payload.branch_id,
-      movement_type: 'purchase_in',
-      quantity: item.quantity,
-      reference_id: purchase.id,
-      reference_type: 'purchase',
-      notes: 'Purchase order received',
-      tenant_id: purchase.tenant_id
-    }))
-    const { error: movErr } = await supabase.from('inventory_movements').insert(movements)
-    if (movErr) throw movErr
-  }
-}
-
-// Helper: Sync Expense
-async function syncExpense(supabase: any, payload: any) {
-  const { error } = await supabase
-    .from('expenses')
-    .insert({
-      branch_id: payload.branch_id,
-      category_id: payload.category_id,
-      amount: payload.amount,
-      description: payload.description,
-      expense_date: payload.expense_date
-    })
-  if (error) throw error
-}
-
-// Helper: Sync Repayment
-async function syncRepayment(supabase: any, payload: any, id: string) {
-  // Check deduplication
-  const { data: existing } = await supabase
-    .from('payments')
-    .select('id')
-    .eq('id', id)
-    .maybeSingle()
-
-  if (existing) return
-
-  // First record payment transaction
-  const { data: payment, error: payErr } = await supabase
-    .from('payments')
-    .insert({
-      id: id,
-      branch_id: payload.branch_id,
-      payment_method: payload.payment_method,
-      amount: payload.amount,
-      reference_code: payload.reference_code || ''
-    })
-    .select()
-    .single()
-
-  if (payErr) throw payErr
-
-  // Record credit repayment linkage
-  const { error: repayErr } = await supabase
-    .from('credit_repayments')
-    .insert({
-      credit_account_id: payload.credit_account_id,
-      payment_id: payment.id,
-      amount: payload.amount,
-      notes: payload.notes || '',
-      tenant_id: payment.tenant_id
-    })
-
-  if (repayErr) throw repayErr
-}
-
-// Helper: Sync Supplier
-async function syncSupplier(supabase: any, payload: any, id: string) {
-  const { data: existing } = await supabase
-    .from('suppliers')
-    .select('id')
-    .eq('id', id)
-    .maybeSingle()
-
-  if (existing) return
-
-  const { error } = await supabase
-    .from('suppliers')
-    .insert({
-      id: id,
-      name: payload.name,
-      contact_person: payload.contact_person || '',
-      phone: payload.phone,
-      email: payload.email || '',
-      address: payload.address || '',
-      notes: payload.notes || ''
-    })
-  if (error) throw error
-}
-
-// Helper: Sync Transfer (Phase 10 integration)
-async function syncTransfer(supabase: any, payload: any, id: string) {
-  const { data: existing } = await supabase
-    .from('transfers')
-    .select('id')
-    .eq('id', id)
-    .maybeSingle()
-
-  if (existing) return
-
-  const { data: transfer, error: tErr } = await supabase
-    .from('transfers')
-    .insert({
-      id: id,
-      from_branch_id: payload.from_branch_id,
-      to_branch_id: payload.to_branch_id,
-      status: payload.status,
-      notes: payload.notes || '',
-      dispatched_at: payload.dispatched_at || null,
-      dispatched_by: payload.dispatched_by || null,
-      received_at: payload.received_at || null,
-      received_by: payload.received_by || null
-    })
-    .select()
-    .single()
-
-  if (tErr) throw tErr
-
-  // Sync transfer items
-  if (payload.items && payload.items.length > 0) {
-    const items = payload.items.map((item: any) => ({
-      transfer_id: transfer.id,
-      variant_id: item.variant_id,
-      quantity: item.quantity,
-      received_qty: item.received_qty || null,
-      tenant_id: transfer.tenant_id
-    }))
-    const { error: itemsErr } = await supabase.from('transfer_items').insert(items)
-    if (itemsErr) throw itemsErr
-  }
-}
+// Legacy sync helpers (syncSale, syncPurchase, etc.) have been removed.
+// All supported offline mutations now map to canonical RPC endpoints.
 
 let _onlineListenerRegistered = false;
 

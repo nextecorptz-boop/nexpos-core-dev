@@ -74,17 +74,10 @@ export default async function TenantCatalogPage({ params }: Props) {
     )
   }
 
-  // 2. Fetch Categories for this tenant
-  const { data: categories } = await supabase
-    .from('product_categories')
-    .select('*')
-    .eq('tenant_id', tenant.id)
-    .order('name')
-
-  // 3. Fetch Public, Active Products for this tenant
+  // 2. Fetch Public, Active Products for this tenant
   const { data: products } = await supabase
     .from('product_families')
-    .select('*, category:product_categories(name)')
+    .select('*')
     .eq('tenant_id', tenant.id)
     .eq('is_public', true)
     .eq('is_active', true)
@@ -99,12 +92,13 @@ export default async function TenantCatalogPage({ params }: Props) {
     base_price: Number(p.base_price),
     currency: p.currency || 'TZS',
     public_image_path: p.public_image_path,
-    category: p.category
+    category: p.category || 'Uncategorized'
   }))
 
-  const formattedCategories = (categories || []).map((c: any) => ({
-    id: c.id,
-    name: c.name
+  const uniqueCats = Array.from(new Set(formattedProducts.map(p => p.category)))
+  const formattedCategories = uniqueCats.map((cat: string) => ({
+    id: cat.toLowerCase().replace(/\s+/g, '-'),
+    name: cat
   }))
 
   return (
