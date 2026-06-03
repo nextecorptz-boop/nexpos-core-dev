@@ -11,6 +11,7 @@ import { PaymentPanel } from '@/components/workspace/pos/payment-panel'
 import { SuccessState } from '@/components/workspace/pos/success-state'
 import { addToSyncQueue } from '@/lib/sync/sync-engine'
 import { db } from '@/lib/sync/db'
+import { ulid } from 'ulid'
 import { toast } from 'sonner'
 
 interface CartItem {
@@ -280,7 +281,7 @@ export default function POSPage() {
 
       // Build payload for complete_sale RPC
       const salePayload = {
-        client_id: crypto.randomUUID(), // Idempotency key
+        client_id: ulid(), // Idempotency key
         branch_id: activeBranchId,
         customer_id: null,
         payment_method: method,
