@@ -15,11 +15,10 @@ import {
 import Link from 'next/link'
 import { forecastRevenue } from '@/lib/domain/forecast'
 import { NxKpiCard } from '@/components/workspace/ui/nx-kpi-card'
-import dynamic from 'next/dynamic'
+import nextDynamic from 'next/dynamic'
 import { Skeleton } from '@/components/ui/skeleton'
 
-const RevenueChart = dynamic(() => import('@/components/charts/revenue-chart'), {
-  ssr: false,
+const RevenueChart = nextDynamic(() => import('@/components/charts/revenue-chart'), {
   loading: () => <Skeleton className="w-full h-full min-h-[250px] bg-nx-elevated/50" />
 })
 

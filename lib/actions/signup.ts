@@ -72,6 +72,7 @@ export async function signupTenant(prevState: any, formData: FormData): Promise<
       .insert({
         tenant_id: tenant.id,
         name: 'Main Branch - ' + businessName,
+        code: 'MAIN',
         is_active: true
       })
       .select()
@@ -81,50 +82,7 @@ export async function signupTenant(prevState: any, formData: FormData): Promise<
       throw new Error(`Branch creation failed: ${branchError.message}`)
     }
 
-    // 4. Seed Default Product Categories
-    const defaultCategories = [
-      { tenant_id: tenant.id, name: "Men's Shoes", description: 'Formal, casual, and sports footwear' },
-      { tenant_id: tenant.id, name: "Women's Shoes", description: 'Sandals, heels, and flats' },
-      { tenant_id: tenant.id, name: "Children's Shoes", description: 'Durable footwear for kids' }
-    ]
-    const { error: catError } = await supabase
-      .from('product_categories')
-      .insert(defaultCategories)
-
-    if (catError) {
-      throw new Error(`Category seeding failed: ${catError.message}`)
-    }
-
-    // 5. Seed Default Expense Categories
-    const defaultExpenseCategories = [
-      { tenant_id: tenant.id, name: 'Rent' },
-      { tenant_id: tenant.id, name: 'Utilities' },
-      { tenant_id: tenant.id, name: 'Salaries' },
-      { tenant_id: tenant.id, name: 'Supplies' }
-    ]
-    const { error: expError } = await supabase
-      .from('expense_categories')
-      .insert(defaultExpenseCategories)
-
-    if (expError) {
-      throw new Error(`Expense category seeding failed: ${expError.message}`)
-    }
-
-    // 6. Seed Default System Settings
-    const defaultSettings = [
-      { tenant_id: tenant.id, key: 'business_name', value: JSON.stringify(businessName) },
-      { tenant_id: tenant.id, key: 'business_currency', value: JSON.stringify('TZS') },
-      { tenant_id: tenant.id, key: 'low_stock_alert_threshold', value: JSON.stringify(5) }
-    ]
-    const { error: settingsError } = await supabase
-      .from('system_settings')
-      .insert(defaultSettings)
-
-    if (settingsError) {
-      throw new Error(`Settings seeding failed: ${settingsError.message}`)
-    }
-
-    // 7. Create Supabase Auth User with admin client to inject tenant custom metadata
+    // 4. Create Supabase Auth User with admin client to inject tenant custom metadata
     const { data: authUser, error: authError } = await supabase.auth.admin.createUser({
       email,
       password,
@@ -141,14 +99,13 @@ export async function signupTenant(prevState: any, formData: FormData): Promise<
       throw new Error(`Auth account creation failed: ${authError?.message || 'Unknown error'}`)
     }
 
-    // 8. Create profile (linked to the auth user)
+    // 5. Create profile (linked to the auth user)
     const { error: profileError } = await supabase
       .from('profiles')
       .insert({
         id: authUser.user.id,
         tenant_id: tenant.id,
         full_name: fullName,
-        email,
         role: 'owner',
         branch_id: null,
         is_active: true

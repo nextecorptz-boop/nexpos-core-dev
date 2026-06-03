@@ -1,24 +1,19 @@
 import { requireRole } from '@/lib/auth/session'
 import { TrendingUp, BarChart2, Package, Download } from 'lucide-react'
 import { getSalesSummary, getTopProducts, getInventoryValuation } from '@/lib/queries/reports'
-import dynamic from 'next/dynamic'
+import nextDynamic from 'next/dynamic'
 import { Skeleton } from '@/components/ui/skeleton'
+import ExportButtons from '@/components/reports/export-buttons'
 
-const RevenueChart = dynamic(() => import('@/components/charts/revenue-chart'), {
-  ssr: false,
+const RevenueChart = nextDynamic(() => import('@/components/charts/revenue-chart'), {
   loading: () => <Skeleton className="w-full h-full min-h-[300px] bg-nx-elevated/50" />
 })
 
-const SalesChart = dynamic(() => import('@/components/charts/sales-chart'), {
-  ssr: false,
+const SalesChart = nextDynamic(() => import('@/components/charts/sales-chart'), {
   loading: () => <Skeleton className="w-full h-full min-h-[300px] bg-nx-elevated/50" />
 })
 
-const ExportButtons = dynamic(() => import('@/components/reports/export-buttons'), {
-  ssr: false
-})
-
-export const dynamicConfig = 'force-dynamic'
+export const dynamic = 'force-dynamic'
 
 export default async function ReportsPage() {
   const profile = await requireRole(['owner', 'manager'])
