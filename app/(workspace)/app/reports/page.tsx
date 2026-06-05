@@ -35,8 +35,8 @@ export default async function ReportsPage() {
 
   // Process data for charts
   const revenueData = salesSummary.rawData.map((sale: any) => ({
-    date: new Date(sale.sale_date).toLocaleDateString('en-US', { weekday: 'short' }),
-    revenue: Number(sale.total_amount)
+    date: new Date(sale.completed_at).toLocaleDateString('en-US', { weekday: 'short' }),
+    revenue: Number(sale.total)
   }))
 
   const formatCurrency = (val: number) => {

@@ -35,11 +35,11 @@ export default async function DashboardPage() {
   
   const { data: todaySales, count: todaySalesCount } = await supabase
     .from('sales')
-    .select('id, total_amount, sale_lines(line_total, unit_cost, quantity)', { count: 'exact' })
-    .gte('sale_date', today)
+    .select('id, total, sale_lines(line_total, unit_cost, quantity)', { count: 'exact' })
+    .gte('completed_at', today)
     .eq('status', 'completed')
 
-  const todaysRevenue = todaySales?.reduce((sum, sale) => sum + Number(sale.total_amount), 0) || 0
+  const todaysRevenue = todaySales?.reduce((sum, sale) => sum + Number(sale.total), 0) || 0
   const orders = todaySalesCount || 0
   const avgOrder = orders > 0 ? todaysRevenue / orders : 0
   
@@ -64,8 +64,8 @@ export default async function DashboardPage() {
   // Recent sales
   const { data: recentSales } = await supabase
     .from('sales')
-    .select('*, customer:customers(full_name), cashier:profiles!sales_cashier_id_fkey(full_name)')
-    .order('sale_date', { ascending: false })
+    .select('id, receipt_number, completed_at, total, status, customer:customers(full_name)')
+    .order('completed_at', { ascending: false })
     .limit(10)
 
   // Fetch Cash Sessions for reconciliation metrics (Stubbed for Phase 5B)
@@ -282,10 +282,10 @@ export default async function DashboardPage() {
                       <td className="py-3 px-5 font-data text-[12px] text-nx-text">{sale.receipt_number}</td>
                       <td className="py-3 px-5 font-ui text-[13px] text-nx-text">{sale.customer?.full_name || 'Walk-in'}</td>
                       <td className="py-3 px-5 font-data text-[12px] text-nx-text-sec hidden md:table-cell">
-                        {new Date(sale.sale_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        {new Date(sale.completed_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </td>
                       <td className="py-3 px-5 font-data text-[12px] text-nx-text text-right">
-                        {formatCurrency(sale.total_amount)}
+                        {formatCurrency(sale.total)}
                       </td>
                       <td className="py-3 px-5">
                         <span className="px-2 py-1 rounded-full text-[10px] font-medium bg-nx-green/10 text-nx-green uppercase tracking-wide">
