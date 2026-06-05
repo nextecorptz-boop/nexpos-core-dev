@@ -1,0 +1,210 @@
+/* ============================================================
+   NEXPOS DESIGN SYSTEM — colors_and_type.css
+   Premium dark retail operating system for Tanzanian SMEs.
+   Direction: true-black / charcoal / graphite base, GREEN as the
+   single brand + action color, warm off-white type, amber for
+   low-stock, red/pink for danger + notifications.
+   This intentionally REPLACES the legacy blue (#0B1020 / cyan
+   #06B6D4) look found in the source codebase.
+   Fonts: Plus Jakarta Sans (display + UI) + JetBrains Mono (data)
+   loaded from Google Fonts — see @import below.
+   ============================================================ */
+
+/* NOTE: Google Fonts @import lives in app/globals.css to keep all third-party
+   font imports in one place and avoid duplicate font requests. */
+
+:root {
+  /* ---------- CANVAS & SURFACES (true black → graphite) ---------- */
+  --nx-black:        #07080701;  /* deepest — app canvas behind sheets */
+  --nx-bg:           #0A0C0A;    /* primary app background (warm-black) */
+  --nx-surface:      #121512;    /* base card / panel */
+  --nx-surface-2:    #171A16;    /* nested surface */
+  --nx-elevated:     #1C201B;    /* elevated card, menu, bottom-sheet */
+  --nx-hover:        #242922;    /* hover fill */
+  --nx-pressed:      #2C322A;    /* active/pressed fill */
+
+  /* ---------- BORDERS & HAIRLINES ---------- */
+  --nx-border:       #262B25;    /* default 1px border */
+  --nx-border-soft:  rgba(255,255,255,0.06);  /* hairline divider */
+  --nx-border-strong:#3A4138;    /* emphasised border */
+
+  /* ---------- BRAND GREEN (single action colour) ---------- */
+  --nx-green:        #25C26E;    /* primary brand + action */
+  --nx-green-bright: #43E08A;    /* hover / highlight / glow core */
+  --nx-green-deep:   #128A4B;    /* pressed / deep fill */
+  --nx-green-tint:   rgba(37,194,110,0.12);  /* soft tinted bg */
+  --nx-green-tint-2: rgba(37,194,110,0.18);  /* stronger tint */
+  --nx-on-green:     #04210F;    /* text/icon on a green fill */
+
+  /* ---------- TEXT (warm off-white → muted) ---------- */
+  --nx-text:         #F1F4EF;    /* primary text / headings */
+  --nx-text-sec:     #A3AA9F;    /* secondary text, labels */
+  --nx-text-muted:   #727A6E;    /* muted, captions, placeholders */
+  --nx-text-faint:   #444A40;    /* faintest, disabled */
+
+  /* ---------- SEMANTIC ---------- */
+  --nx-amber:        #F5A524;    /* LOW STOCK warning */
+  --nx-amber-tint:   rgba(245,165,36,0.12);
+  --nx-gold:         #C9A84C;    /* premium accent — use sparingly */
+  --nx-red:          #F1493F;    /* danger / destructive */
+  --nx-red-tint:     rgba(241,73,63,0.12);
+  --nx-pink:         #FB5468;    /* notification dot / urgent badge */
+  --nx-info:         #5BB1C9;    /* neutral info (rare, muted teal) */
+
+  /* ---------- DATA-VIZ (calm, money-forward) ---------- */
+  --nx-chart-1:      #25C26E;    /* green — revenue / positive */
+  --nx-chart-2:      #F5A524;    /* amber — comparison / stock */
+  --nx-chart-3:      #6E7B6A;    /* graphite — neutral series */
+  --nx-chart-4:      #C9A84C;    /* gold — secondary metric */
+  --nx-chart-5:      #FB5468;    /* pink — exceptions */
+  --nx-grid:         rgba(255,255,255,0.05);
+
+  /* ---------- RADII (rounded, premium mobile surfaces) ---------- */
+  --nx-r-xs:   8px;    /* chips, small controls */
+  --nx-r-sm:   12px;   /* buttons, inputs */
+  --nx-r-md:   18px;   /* standard card */
+  --nx-r-lg:   24px;   /* hero card, bottom-sheet */
+  --nx-r-xl:   32px;   /* large feature panel */
+  --nx-r-pill: 999px;  /* pills, circular action buttons */
+
+  /* ---------- SPACING (4pt base) ---------- */
+  --nx-s-1: 4px;   --nx-s-2: 8px;   --nx-s-3: 12px;  --nx-s-4: 16px;
+  --nx-s-5: 20px;  --nx-s-6: 24px;  --nx-s-8: 32px;  --nx-s-10: 40px;
+  --nx-s-12: 48px; --nx-s-16: 64px;
+
+  /* ---------- ELEVATION (soft, dark, layered) ---------- */
+  --nx-shadow-sm:   0 1px 2px rgba(0,0,0,0.40);
+  --nx-shadow-card: 0 1px 3px rgba(0,0,0,0.45), 0 10px 28px rgba(0,0,0,0.35);
+  --nx-shadow-lg:   0 8px 40px rgba(0,0,0,0.55);
+  --nx-shadow-sheet:0 -8px 48px rgba(0,0,0,0.60);
+  --nx-glow-green:  0 0 0 1px rgba(37,194,110,0.30), 0 8px 28px rgba(37,194,110,0.22);
+  --nx-glow-amber:  0 8px 24px rgba(245,165,36,0.16);
+  --nx-inset-top:   inset 0 1px 0 rgba(255,255,255,0.05);
+
+  /* ---------- MOTION (smooth, Selcom-style) ---------- */
+  --nx-ease:        cubic-bezier(0.22, 1, 0.36, 1);   /* gentle out-expo */
+  --nx-ease-inout:  cubic-bezier(0.65, 0, 0.35, 1);
+  --nx-dur-fast:    140ms;
+  --nx-dur:         220ms;
+  --nx-dur-slow:    360ms;
+
+  /* ---------- TYPE FAMILIES ---------- */
+  --nx-font-display: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  --nx-font-ui:      'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  --nx-font-data:    'JetBrains Mono', ui-monospace, monospace;
+
+  /* ---------- TYPE SCALE (semantic) ---------- */
+  /* Display — hero numbers, big balances */
+  --nx-display-size: 40px;  --nx-display-weight: 800; --nx-display-lh: 1.05; --nx-display-ls: -0.02em;
+  /* Headings */
+  --nx-h1-size: 28px; --nx-h1-weight: 700; --nx-h1-lh: 1.15; --nx-h1-ls: -0.015em;
+  --nx-h2-size: 22px; --nx-h2-weight: 700; --nx-h2-lh: 1.2;  --nx-h2-ls: -0.01em;
+  --nx-h3-size: 17px; --nx-h3-weight: 600; --nx-h3-lh: 1.3;  --nx-h3-ls: -0.005em;
+  /* Body */
+  --nx-body-size: 15px; --nx-body-weight: 400; --nx-body-lh: 1.55;
+  --nx-body-sm-size: 13px; --nx-body-sm-lh: 1.5;
+  /* Labels / overlines / captions */
+  --nx-label-size: 11px; --nx-label-weight: 700; --nx-label-ls: 0.14em; /* UPPERCASE overline */
+  --nx-caption-size: 12px; --nx-caption-weight: 500;
+  /* Data / numeric (mono) */
+  --nx-data-size: 14px; --nx-data-weight: 600; --nx-data-ls: -0.01em;
+}
+
+/* ============================================================
+   SEMANTIC TYPE CLASSES — apply directly or copy the rules.
+   ============================================================ */
+.nx-display {
+  font-family: var(--nx-font-display);
+  font-size: var(--nx-display-size); font-weight: var(--nx-display-weight);
+  line-height: var(--nx-display-lh); letter-spacing: var(--nx-display-ls);
+  color: var(--nx-text);
+}
+.nx-h1 { font-family: var(--nx-font-display); font-size: var(--nx-h1-size); font-weight: var(--nx-h1-weight); line-height: var(--nx-h1-lh); letter-spacing: var(--nx-h1-ls); color: var(--nx-text); }
+.nx-h2 { font-family: var(--nx-font-display); font-size: var(--nx-h2-size); font-weight: var(--nx-h2-weight); line-height: var(--nx-h2-lh); letter-spacing: var(--nx-h2-ls); color: var(--nx-text); }
+.nx-h3 { font-family: var(--nx-font-ui); font-size: var(--nx-h3-size); font-weight: var(--nx-h3-weight); line-height: var(--nx-h3-lh); letter-spacing: var(--nx-h3-ls); color: var(--nx-text); }
+.nx-body { font-family: var(--nx-font-ui); font-size: var(--nx-body-size); font-weight: var(--nx-body-weight); line-height: var(--nx-body-lh); color: var(--nx-text); }
+.nx-body-sm { font-family: var(--nx-font-ui); font-size: var(--nx-body-sm-size); line-height: var(--nx-body-sm-lh); color: var(--nx-text-sec); }
+.nx-label { font-family: var(--nx-font-ui); font-size: var(--nx-label-size); font-weight: var(--nx-label-weight); letter-spacing: var(--nx-label-ls); text-transform: uppercase; color: var(--nx-text-muted); }
+.nx-caption { font-family: var(--nx-font-ui); font-size: var(--nx-caption-size); font-weight: var(--nx-caption-weight); color: var(--nx-text-sec); }
+.nx-data { font-family: var(--nx-font-data); font-size: var(--nx-data-size); font-weight: var(--nx-data-weight); letter-spacing: var(--nx-data-ls); color: var(--nx-text); font-variant-numeric: tabular-nums; }
+
+/* Numeric helper — always tabular for aligned money columns */
+.nx-num { font-family: var(--nx-font-data); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+
+/* ============================================================
+   MODULE ICON COLOR SYSTEM
+   Role-based, controlled accents so every module is recognised
+   in < 1s. Green stays the BRAND/action color; these are *icon*
+   identity accents only — used in tinted tiles, never as fills
+   for buttons or chrome. Premium, functional, not neon.
+   ============================================================ */
+:root {
+  --mod-pos:        #2FD076;  /* POS / Sales — emerald green */
+  --mod-inventory:  #F5A524;  /* Inventory / Stock — amber gold */
+  --mod-products:   #38D2C6;  /* Products — soft cyan */
+  --mod-customers:  #FB7185;  /* Customers — coral */
+  --mod-credit:     #E8C14C;  /* Credit / Ledger — yellow-gold */
+  --mod-till:       #41E0A0;  /* Till / Cash — mint green */
+  --mod-returns:    #FB923C;  /* Returns — orange */
+  --mod-reports:    #4DE38C;  /* Trends / Reports — electric green */
+  --mod-orders:     #5AB6EC;  /* Orders — sky blue */
+  --mod-suppliers:  #A78BFA;  /* Suppliers — violet */
+  --mod-transfers:  #2DD4BF;  /* Transfers — teal */
+  --mod-expenses:   #FB5468;  /* Expenses — rose */
+  --mod-control:    #6AA9E9;  /* Control / Admin — blue */
+  --mod-security:   #A3E635;  /* Security — lime shield */
+  --mod-settings:   #AAB1A6;  /* Settings — neutral silver */
+  --mod-alerts:     #F7B23B;  /* Alerts — warning amber */
+}
+
+/* Reusable colored icon tile.
+   Drive the color with [data-mod="..."] (sets --c) or set --c directly.
+   Sizes: default 44px; .sm 38px; .lg 54px. */
+.nx-modtile {
+  --c: var(--nx-text-sec);
+  width: 44px; height: 44px; border-radius: 13px;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--c); flex: none;
+  background:
+    radial-gradient(120% 120% at 30% 18%, color-mix(in srgb, var(--c) 18%, transparent), transparent 68%),
+    var(--nx-surface);
+  border: 1px solid color-mix(in srgb, var(--c) 30%, transparent);
+  transition: transform var(--nx-dur) var(--nx-ease),
+              box-shadow var(--nx-dur) var(--nx-ease),
+              border-color var(--nx-dur) var(--nx-ease),
+              background var(--nx-dur) var(--nx-ease);
+}
+.nx-modtile.sm { width: 38px; height: 38px; border-radius: 11px; }
+.nx-modtile.lg { width: 54px; height: 54px; border-radius: 16px; }
+.nx-modtile:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--c) 55%, transparent);
+  box-shadow: 0 7px 20px color-mix(in srgb, var(--c) 22%, transparent);
+}
+.nx-modtile:active { transform: translateY(0) scale(0.95); }
+.nx-modtile.is-active {
+  border-color: transparent;
+  background:
+    radial-gradient(120% 120% at 30% 18%, color-mix(in srgb, var(--c) 32%, transparent), transparent 70%),
+    var(--nx-elevated);
+  box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--c) 62%, transparent),
+              0 8px 22px color-mix(in srgb, var(--c) 26%, transparent);
+}
+.nx-modtile.is-disabled { opacity: 0.42; }
+
+.nx-modtile[data-mod="pos"]        { --c: var(--mod-pos); }
+.nx-modtile[data-mod="inventory"]  { --c: var(--mod-inventory); }
+.nx-modtile[data-mod="products"]   { --c: var(--mod-products); }
+.nx-modtile[data-mod="customers"]  { --c: var(--mod-customers); }
+.nx-modtile[data-mod="credit"]     { --c: var(--mod-credit); }
+.nx-modtile[data-mod="till"]       { --c: var(--mod-till); }
+.nx-modtile[data-mod="returns"]    { --c: var(--mod-returns); }
+.nx-modtile[data-mod="reports"]    { --c: var(--mod-reports); }
+.nx-modtile[data-mod="orders"]     { --c: var(--mod-orders); }
+.nx-modtile[data-mod="suppliers"]  { --c: var(--mod-suppliers); }
+.nx-modtile[data-mod="transfers"]  { --c: var(--mod-transfers); }
+.nx-modtile[data-mod="expenses"]   { --c: var(--mod-expenses); }
+.nx-modtile[data-mod="control"]    { --c: var(--mod-control); }
+.nx-modtile[data-mod="security"]   { --c: var(--mod-security); }
+.nx-modtile[data-mod="settings"]   { --c: var(--mod-settings); }
+.nx-modtile[data-mod="alerts"]     { --c: var(--mod-alerts); }

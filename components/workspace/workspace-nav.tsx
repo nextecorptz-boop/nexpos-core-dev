@@ -25,7 +25,8 @@ import {
   ClipboardList,
   Activity,
   ShieldAlert,
-  ArrowLeftRight
+  ArrowLeftRight,
+  Wallet
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 
@@ -55,6 +56,7 @@ const swahiliTranslations: Record<string, string> = {
   'Staff Insights': 'Uchambuzi wa Wafanyakazi',
   'Expenses': 'Matumizi ya Duka',
   'Settings': 'Mipangilio',
+  'Payments': 'Malipo',
   'Users': 'Watumiaji',
   'Logout': 'Ondoka',
   'Transfers': 'Uhamisho wa Stoki',
@@ -132,6 +134,7 @@ export default function WorkspaceNav({ user }: { user: any }) {
   ]
 
   const systemGroup: NavItem[] = [
+    { name: 'Payments', href: '/app/payments', icon: Wallet, roles: ['owner', 'manager'] },
     { name: 'Security Logs', href: '/app/security-log', icon: ShieldAlert, roles: ['owner'] },
     { name: 'Settings', href: '/app/settings', icon: Settings, roles: ['owner'] },
     { name: 'Users', href: '/app/users', icon: UserCog, roles: ['owner'] },

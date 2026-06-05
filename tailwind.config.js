@@ -69,20 +69,39 @@ module.exports = {
     				border: 'hsl(var(--sidebar-border))',
     				ring: 'hsl(var(--sidebar-ring))'
     			},
+          /* NEXPOS Design System — true-black canvas + green action.
+             Legacy blue/cyan keys are kept as aliases that now resolve to
+             the new green palette so existing class names (`bg-nx-cyan`,
+             `text-nx-cyan`, etc.) recolor automatically without TypeScript
+             breakage. New code should prefer `nx-green` / `--nx-*` tokens. */
           nx: {
-            bg: '#0B1020',
-            surface: '#111827',
-            elevated: '#1A2236',
-            hover: '#1F2D45',
-            border: '#2A3448',
-            text: '#F0F4F8',
-            'text-sec': '#94A3B8',
-            'text-muted': '#64748B',
-            cyan: '#06B6D4',
+            bg: '#0A0C0A',
+            surface: '#121512',
+            'surface-2': '#171A16',
+            elevated: '#1C201B',
+            hover: '#242922',
+            pressed: '#2C322A',
+            border: '#262B25',
+            'border-strong': '#3A4138',
+            text: '#F1F4EF',
+            'text-sec': '#A3AA9F',
+            'text-muted': '#727A6E',
+            'text-faint': '#444A40',
+            /* Brand green (single action color) */
+            green: '#25C26E',
+            'green-bright': '#43E08A',
+            'green-deep': '#128A4B',
+            'on-green': '#04210F',
+            /* Semantic */
+            amber: '#F5A524',
             gold: '#C9A84C',
-            green: '#10B981',
-            red: '#EF4444',
-            orange: '#F59E0B',
+            red: '#F1493F',
+            pink: '#FB5468',
+            info: '#5BB1C9',
+            /* Legacy aliases — recolor old refs to green so nothing
+               renders cyan/orange anymore. Safe for incremental cleanup. */
+            cyan: '#25C26E',
+            orange: '#F5A524',
           }
     		},
     		borderRadius: {

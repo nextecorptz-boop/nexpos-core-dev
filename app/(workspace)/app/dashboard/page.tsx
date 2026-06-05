@@ -17,6 +17,8 @@ import { forecastRevenue } from '@/lib/domain/forecast'
 import { NxKpiCard } from '@/components/workspace/ui/nx-kpi-card'
 import nextDynamic from 'next/dynamic'
 import { Skeleton } from '@/components/ui/skeleton'
+import { BannerRail } from '@/components/workspace/banners'
+import { loadBannerSnapshot } from '@/lib/banners/state'
 
 const RevenueChart = nextDynamic(() => import('@/components/charts/revenue-chart'), {
   loading: () => <Skeleton className="w-full h-full min-h-[250px] bg-nx-elevated/50" />
@@ -77,6 +79,10 @@ export default async function DashboardPage() {
   // AI Advisory projections
   const monthlyProjectedRevenue = forecastRevenue(todaysRevenue * 30, 1.05)
 
+  // Lifecycle banner snapshot (counts + dismissals). Failures degrade
+  // gracefully — the BannerRail returns null if no banners are eligible.
+  const bannerSnapshot = await loadBannerSnapshot()
+
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat('en-TZ', {
       style: 'currency',
@@ -107,6 +113,16 @@ export default async function DashboardPage() {
             New Sale
           </Link>
         </div>
+      </div>
+
+      {/* Zone 1b: Lifecycle banner rail (SeerBit setup, inventory, insights, ...).
+          Renders nothing when there's no eligible banner. */}
+      <div className="mb-6">
+        <BannerRail
+          bizState={bannerSnapshot.state}
+          initialDismissed={bannerSnapshot.dismissedIds}
+          initialReappear={bannerSnapshot.reappearAfter}
+        />
       </div>
 
       {/* Zone 2: KPI Grid */}
