@@ -1,49 +1,69 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap');
 
+/* NEXPOS Design System tokens — true-black + green direction.
+   Provides --nx-* tokens. Loaded BEFORE Tailwind so the shadcn HSL tokens
+   below can reference the same palette. */
+@import "./nexpos-design-system.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    /* NEXPOS Dark Premium — canonical dark SaaS token layer */
-    --background: 228 49% 8%;         /* #0B1020 (nx-bg) */
-    --foreground: 210 33% 95%;        /* #F0F4F8 (nx-text) */
-    --card: 222 47% 11%;              /* #111827 (nx-surface) */
-    --card-foreground: 210 33% 95%;
-    --popover: 224 42% 16%;           /* #1A2236 (nx-elevated) */
-    --popover-foreground: 210 33% 95%;
-    --primary: 189 94% 43%;           /* #06B6D4 (nx-cyan) */
-    --primary-foreground: 228 49% 8%; /* dark bg on primary */
-    --secondary: 224 42% 16%;         /* #1A2236 (nx-elevated) */
-    --secondary-foreground: 210 33% 95%;
-    --muted: 222 27% 22%;             /* #2A3448 (nx-border) */
-    --muted-foreground: 215 20% 65%;  /* #94A3B8 (nx-text-sec) */
-    --accent: 224 42% 16%;            /* #1A2236 */
-    --accent-foreground: 189 94% 43%; /* cyan on accent */
-    --destructive: 0 84.2% 60.2%;     /* #EF4444 */
-    --destructive-foreground: 210 33% 95%;
-    --border: 222 27% 22%;            /* #2A3448 (nx-border) */
-    --input: 222 27% 22%;
-    --ring: 189 94% 43%;              /* #06B6D4 */
-    --radius: 0.75rem;                /* 12px */
+    /* ----------------------------------------------------------------
+       shadcn / Radix HSL token layer — REWRITTEN to map to the NEXPOS
+       premium dark + green palette. Legacy #0B1020 blue + #06B6D4 cyan
+       is retired; every Radix component now inherits NEXPOS colors
+       automatically.
+       Numbers here are HSL of the matching --nx-* hex tokens.
+       ---------------------------------------------------------------- */
 
-    /* Chart colors */
-    --chart-1: 189 94% 43%;           /* cyan */
-    --chart-2: 45 87% 55%;            /* gold */
-    --chart-3: 160 70% 45%;           /* green */
-    --chart-4: 0 84% 60%;             /* red */
-    --chart-5: 38 92% 50%;            /* orange */
+    /* Surfaces */
+    --background: 100 13% 5%;          /* #0A0C0A  (nx-bg) */
+    --foreground: 96 18% 95%;          /* #F1F4EF  (nx-text) */
+    --card: 105 9% 8%;                 /* #121512  (nx-surface) */
+    --card-foreground: 96 18% 95%;
+    --popover: 96 9% 11%;              /* #1C201B  (nx-elevated) */
+    --popover-foreground: 96 18% 95%;
+
+    /* Brand / action — GREEN replaces cyan */
+    --primary: 146 70% 45%;            /* #25C26E  (nx-green) */
+    --primary-foreground: 142 80% 8%;  /* #04210F  (on-green) */
+
+    --secondary: 96 9% 11%;            /* #1C201B  (nx-elevated) */
+    --secondary-foreground: 96 18% 95%;
+
+    --muted: 100 9% 16%;               /* #262B25  (nx-border) */
+    --muted-foreground: 96 6% 64%;     /* #A3AA9F  (nx-text-sec) */
+
+    --accent: 96 9% 11%;               /* #1C201B */
+    --accent-foreground: 146 70% 45%;  /* green on accent */
+
+    --destructive: 3 87% 60%;          /* #F1493F  (nx-red) */
+    --destructive-foreground: 96 18% 95%;
+
+    --border: 100 9% 16%;              /* #262B25  (nx-border) */
+    --input: 100 9% 16%;
+    --ring: 146 70% 45%;               /* #25C26E  green focus ring */
+    --radius: 0.75rem;                 /* 12px — matches --nx-r-sm */
+
+    /* Charts — green/amber/graphite/gold/pink (no cyan) */
+    --chart-1: 146 70% 45%;            /* green   #25C26E */
+    --chart-2: 38 91% 55%;             /* amber   #F5A524 */
+    --chart-3: 104 5% 45%;             /* graphite #6E7B6A */
+    --chart-4: 46 53% 54%;             /* gold    #C9A84C */
+    --chart-5: 354 95% 66%;            /* pink    #FB5468 */
 
     /* Sidebar tokens */
-    --sidebar-background: 222 47% 11%;  /* #111827 (nx-surface) */
-    --sidebar-foreground: 210 33% 95%;
-    --sidebar-primary: 189 94% 43%;
-    --sidebar-primary-foreground: 228 49% 8%;
-    --sidebar-accent: 224 42% 16%;      /* #1A2236 (nx-elevated) */
-    --sidebar-accent-foreground: 210 33% 95%;
-    --sidebar-border: 222 27% 22%;      /* #2A3448 */
-    --sidebar-ring: 189 94% 43%;
+    --sidebar-background: 105 9% 8%;
+    --sidebar-foreground: 96 18% 95%;
+    --sidebar-primary: 146 70% 45%;
+    --sidebar-primary-foreground: 142 80% 8%;
+    --sidebar-accent: 96 9% 11%;
+    --sidebar-accent-foreground: 96 18% 95%;
+    --sidebar-border: 100 9% 16%;
+    --sidebar-ring: 146 70% 45%;
   }
 }
 
@@ -62,18 +82,10 @@
     font-family: 'Plus Jakarta Sans', sans-serif;
     font-weight: 700;
   }
-  .font-display {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-  }
-  .font-body {
-    font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
-  }
-  .font-label {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-  }
-  .font-data {
-    font-family: 'JetBrains Mono', monospace;
-  }
+  .font-display { font-family: 'Plus Jakarta Sans', sans-serif; }
+  .font-body    { font-family: 'Plus Jakarta Sans', 'Inter', sans-serif; }
+  .font-label   { font-family: 'Plus Jakarta Sans', sans-serif; }
+  .font-data    { font-family: 'JetBrains Mono', monospace; }
 
   /* Layout Transitions and Spacing */
   main {
@@ -82,53 +94,387 @@
   .sidebar-collapsed main {
     padding-left: 4rem !important;
   }
-  
+
   /* Hide default scrollbars globally but keep functionality active */
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 }
 
 @layer components {
   .container {
     @apply mx-auto px-6 lg:px-8 max-w-7xl;
   }
-  
+
+  /* Legacy public-page button classes — kept for backwards compatibility,
+     re-skinned to NEXPOS green palette. */
   .btn-primary {
-    @apply bg-nx-cyan text-white font-ui font-semibold uppercase tracking-wider text-xs px-6 py-3.5 hover:opacity-90 transition-all rounded-nx-btn active:scale-[0.97] shadow-sm;
+    @apply bg-nx-green text-[color:var(--nx-on-green)] font-ui font-semibold uppercase tracking-wider text-xs px-6 py-3.5 hover:opacity-90 transition-all rounded-nx-btn active:scale-[0.97] shadow-sm;
   }
-  
   .btn-secondary {
     @apply bg-nx-surface text-nx-text font-ui font-medium uppercase tracking-wider text-xs px-6 py-3.5 border border-nx-border hover:bg-nx-hover transition-all rounded-nx-btn active:scale-[0.97] shadow-sm;
   }
-  
-  .section-padding {
-    @apply py-20 lg:py-32;
-  }
-  
-  .glass-card {
-    @apply bg-nx-surface border border-nx-border rounded-nx-card shadow-sm;
-  }
+  .section-padding { @apply py-20 lg:py-32; }
+  .glass-card { @apply bg-nx-surface border border-nx-border rounded-nx-card shadow-sm; }
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+  .text-balance { text-wrap: balance; }
 
   /* Sharp geometry (zero radius) — public pages only */
   .sharp { border-radius: 0 !important; }
 
-  /* Subtle surface glow — use sparingly for primary actions */
-  .glow-cyan {
-    box-shadow: 0 0 24px 0 rgba(6, 182, 212, 0.15);
+  /* Brand glows — green replaces cyan as the action glow. */
+  .glow-green {
+    box-shadow: 0 0 24px 0 rgba(37, 194, 110, 0.18);
   }
-
   .glow-gold {
     box-shadow: 0 0 24px 0 rgba(201, 168, 76, 0.12);
   }
+  /* Alias kept for legacy code paths that still reference glow-cyan.
+     Maps to green so nothing renders cyan anymore. */
+  .glow-cyan {
+    box-shadow: 0 0 24px 0 rgba(37, 194, 110, 0.18);
+  }
+}
+
+/* ================================================================
+   NEXPOS mobile UI-kit component styles (ported from
+   ui_kits/mobile/styles.css). Only the classes needed by the
+   primitives, banner system, and payments surface are included.
+   All values are token-driven — no hard-coded hex.
+   ================================================================ */
+
+/* ---------- Chips ---------- */
+.nx-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 8px; border-radius: var(--nx-r-xs);
+  font-family: var(--nx-font-ui);
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.02em;
+  background: var(--nx-surface);
+  color: var(--nx-text-sec);
+  border: 1px solid var(--nx-border-soft);
+  white-space: nowrap;
+}
+.nx-chip.green  { background: var(--nx-green-tint);  color: var(--nx-green); border-color: rgba(37,194,110,0.30); }
+.nx-chip.amber  { background: var(--nx-amber-tint);  color: var(--nx-amber); border-color: rgba(245,165,36,0.30); }
+.nx-chip.red    { background: var(--nx-red-tint);    color: var(--nx-red);   border-color: rgba(241,73,63,0.30); }
+.nx-chip.gold   { background: rgba(201,168,76,0.12); color: var(--nx-gold);  border-color: rgba(201,168,76,0.30); }
+.nx-chip.muted  { background: var(--nx-surface);     color: var(--nx-text-muted); }
+.nx-chip.pink   { background: rgba(251,84,104,0.12); color: var(--nx-pink);  border-color: rgba(251,84,104,0.30); }
+
+/* ---------- Cards & panels ---------- */
+.nx-card {
+  background: var(--nx-surface);
+  border: 1px solid var(--nx-border-soft);
+  border-radius: var(--nx-r-md);
+  box-shadow: var(--nx-shadow-card);
+}
+
+/* ---------- Buttons ---------- */
+.nx-btn-primary {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 14px 20px;
+  background: var(--nx-green);
+  color: var(--nx-on-green);
+  font-family: var(--nx-font-ui);
+  font-weight: 700; font-size: 15px;
+  border: 0; border-radius: var(--nx-r-sm);
+  box-shadow: var(--nx-glow-green);
+  transition: transform var(--nx-dur-fast) var(--nx-ease),
+              background var(--nx-dur) var(--nx-ease);
+  cursor: pointer;
+}
+.nx-btn-primary:hover { background: var(--nx-green-bright); }
+.nx-btn-primary:active { transform: scale(0.97); background: var(--nx-green-deep); }
+.nx-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.nx-btn-ghost {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 10px 14px;
+  background: var(--nx-surface);
+  color: var(--nx-text);
+  border: 1px solid var(--nx-border);
+  border-radius: var(--nx-r-sm);
+  font-family: var(--nx-font-ui); font-weight: 600; font-size: 13px;
+  transition: background var(--nx-dur) var(--nx-ease);
+  cursor: pointer;
+}
+.nx-btn-ghost:hover { background: var(--nx-hover); }
+
+/* ---------- Banner rail (lifecycle marketing cards) ---------- */
+.nx-banner-system { display: flex; flex-direction: column; gap: 12px; }
+.nx-banner-rail {
+  display: flex; gap: 12px;
+  overflow-x: auto; scroll-snap-type: x mandatory;
+  padding: 4px 16px 8px;
+  margin: 0 -16px;
+  scrollbar-width: none;
+}
+.nx-banner-rail::-webkit-scrollbar { display: none; }
+.nx-banner-dots {
+  display: flex; gap: 6px; justify-content: center;
+}
+.nx-banner-dots i {
+  width: 6px; height: 6px; border-radius: 999px;
+  background: var(--nx-border-strong); transition: background var(--nx-dur) var(--nx-ease);
+}
+.nx-banner-dots i.on { background: var(--nx-green); }
+
+.nx-banner {
+  position: relative;
+  flex: 0 0 290px;
+  min-width: 290px;
+  scroll-snap-align: start;
+  background: var(--nx-surface);
+  border: 1px solid var(--nx-border-soft);
+  border-radius: var(--nx-r-md);
+  padding: 16px 18px 14px;
+  overflow: hidden;
+  box-shadow: var(--nx-shadow-card);
+}
+.nx-banner-glow {
+  position: absolute; inset: -40% -10% auto auto;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, var(--nx-green-tint-2) 0%, transparent 70%);
+  pointer-events: none;
+}
+.nx-banner.inventory .nx-banner-glow { background: radial-gradient(circle, var(--nx-amber-tint) 0%, transparent 70%); }
+.nx-banner.insights  .nx-banner-glow { background: radial-gradient(circle, rgba(77,227,140,0.12) 0%, transparent 70%); }
+.nx-banner.social    .nx-banner-glow { background: radial-gradient(circle, rgba(251,113,133,0.10) 0%, transparent 70%); }
+.nx-banner.upgrade   .nx-banner-glow { background: radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%); }
+
+.nx-banner-ic {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px;
+  border-radius: var(--nx-r-sm);
+  background: var(--nx-elevated);
+  color: var(--nx-green);
+  margin-bottom: 10px;
+}
+.nx-banner.inventory .nx-banner-ic { color: var(--nx-amber); }
+.nx-banner.insights  .nx-banner-ic { color: var(--mod-reports); }
+.nx-banner.social    .nx-banner-ic { color: var(--mod-customers); }
+.nx-banner.upgrade   .nx-banner-ic { color: var(--nx-gold); }
+
+.nx-banner-title {
+  font-family: var(--nx-font-display);
+  font-size: 15px; font-weight: 700;
+  color: var(--nx-text);
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+.nx-banner-sub {
+  font-family: var(--nx-font-ui);
+  font-size: 12.5px; line-height: 1.45;
+  color: var(--nx-text-sec);
+  margin-bottom: 12px;
+}
+.nx-banner-cta {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 8px 12px;
+  background: var(--nx-green-tint);
+  color: var(--nx-green);
+  border: 0; border-radius: var(--nx-r-xs);
+  font-family: var(--nx-font-ui);
+  font-size: 12px; font-weight: 700;
+  cursor: pointer;
+  transition: background var(--nx-dur) var(--nx-ease);
+}
+.nx-banner-cta:hover { background: var(--nx-green-tint-2); }
+.nx-banner-close {
+  position: absolute; top: 10px; right: 10px;
+  width: 24px; height: 24px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent;
+  color: var(--nx-text-muted);
+  border: 0; border-radius: 999px;
+  cursor: pointer;
+}
+.nx-banner-close:hover { background: var(--nx-hover); color: var(--nx-text); }
+
+/* ---------- Status / "done" cards (compact) ---------- */
+.nx-status-cards { display: flex; flex-direction: column; gap: 8px; }
+.nx-status-card {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px;
+  background: var(--nx-surface);
+  border: 1px solid var(--nx-border-soft);
+  border-radius: var(--nx-r-sm);
+}
+.nx-status-text {
+  flex: 1; min-width: 0;
+  font-family: var(--nx-font-ui);
+  font-size: 13px; font-weight: 600;
+  color: var(--nx-text);
+}
+.nx-status-cta {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: transparent;
+  color: var(--nx-green);
+  border: 0;
+  font-family: var(--nx-font-ui);
+  font-size: 12px; font-weight: 700;
+  cursor: pointer;
+}
+
+/* ---------- Activation checklist ---------- */
+.nx-checklist { display: flex; flex-direction: column; padding: 6px; }
+.nx-check-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--nx-r-sm);
+}
+.nx-check-item.is-todo { opacity: 0.7; }
+.nx-check-mark {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px;
+  border-radius: 999px;
+  background: var(--nx-elevated);
+  color: var(--nx-text-muted);
+  flex: none;
+}
+.nx-check-mark.done   { background: var(--nx-green-tint); color: var(--nx-green); }
+.nx-check-mark.active { background: var(--nx-green); color: var(--nx-on-green); }
+.nx-check-label {
+  flex: 1; min-width: 0;
+  font-family: var(--nx-font-ui);
+  font-size: 13px;
+  color: var(--nx-text);
+}
+
+/* ---------- Provider card (Payments) ---------- */
+.nx-provider {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px;
+}
+.nx-provider-logo {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px;
+  border-radius: var(--nx-r-sm);
+  background: var(--nx-elevated);
+  color: var(--nx-green);
+}
+
+/* ---------- Method rows (Payments) ---------- */
+.nx-list { display: flex; flex-direction: column; padding: 4px; }
+.nx-method-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px;
+}
+.nx-method-ic {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px;
+  border-radius: var(--nx-r-sm);
+  background: var(--nx-elevated);
+  color: var(--nx-text-sec);
+}
+
+/* ---------- Section header ---------- */
+.nx-section-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 4px 8px;
+}
+
+/* ---------- Bottom-sheet ---------- */
+.nx-sheet-scrim {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.60);
+  backdrop-filter: blur(6px);
+  z-index: 60;
+  animation: nx-fade-in var(--nx-dur) var(--nx-ease);
+}
+.nx-sheet {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  background: var(--nx-elevated);
+  border-top-left-radius: var(--nx-r-lg);
+  border-top-right-radius: var(--nx-r-lg);
+  box-shadow: var(--nx-shadow-sheet);
+  padding: 20px 20px max(20px, env(safe-area-inset-bottom)) 20px;
+  z-index: 61;
+  animation: nx-slide-up var(--nx-dur) var(--nx-ease);
+  max-height: 85vh;
+  overflow-y: auto;
+}
+.nx-sheet-handle {
+  width: 36px; height: 4px; border-radius: 999px;
+  background: var(--nx-border-strong);
+  margin: 0 auto 12px;
+}
+@keyframes nx-fade-in  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes nx-slide-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+/* ---------- Empty state ---------- */
+.nx-empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center;
+  padding: 40px 24px;
+  color: var(--nx-text-sec);
+}
+.nx-empty-ic {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 56px; height: 56px;
+  border-radius: 999px;
+  background: var(--nx-surface);
+  color: var(--nx-text-muted);
+  margin-bottom: 14px;
+}
+.nx-empty-title {
+  font-family: var(--nx-font-display);
+  font-size: 16px; font-weight: 700;
+  color: var(--nx-text);
+  margin-bottom: 6px;
+}
+.nx-empty-sub {
+  font-family: var(--nx-font-ui);
+  font-size: 13px;
+  color: var(--nx-text-sec);
+  max-width: 280px;
+}
+
+/* ---------- Coming soon (planned modules) ---------- */
+.nx-coming {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center;
+  padding: 48px 24px;
+}
+.nx-coming-ic {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 64px; height: 64px;
+  border-radius: var(--nx-r-md);
+  background: var(--nx-surface);
+  color: var(--nx-text-muted);
+  margin-bottom: 16px;
+}
+
+/* ---------- Toast ---------- */
+.nx-toast {
+  position: fixed; left: 50%; bottom: 24px;
+  transform: translateX(-50%);
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px;
+  background: var(--nx-elevated);
+  color: var(--nx-text);
+  border: 1px solid var(--nx-border);
+  border-radius: var(--nx-r-sm);
+  box-shadow: var(--nx-shadow-lg);
+  font-family: var(--nx-font-ui);
+  font-size: 13px; font-weight: 600;
+  z-index: 80;
+  max-width: calc(100% - 32px);
+  animation: nx-fade-in var(--nx-dur) var(--nx-ease);
+}
+
+/* ---------- Skeleton ---------- */
+.nx-skel {
+  background: linear-gradient(90deg, var(--nx-surface) 0%, var(--nx-hover) 50%, var(--nx-surface) 100%);
+  background-size: 200% 100%;
+  animation: nx-shimmer 1.6s linear infinite;
+  border-radius: var(--nx-r-sm);
+}
+@keyframes nx-shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .nx-sheet-scrim, .nx-sheet, .nx-toast { animation: none; }
+  .nx-skel { animation: none; }
 }

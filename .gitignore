@@ -114,3 +114,13 @@ chainlit.md
 # Project-specific
 # ──────────────────────────────────────────────
 memory/test_credentials.md
+
+# ──────────────────────────────────────────────
+# Local tooling config (machine-specific, may hold secrets)
+# ──────────────────────────────────────────────
+.mcp.json
+
+# ──────────────────────────────────────────────
+# Temporary patch/diff files
+# ──────────────────────────────────────────────
+*.patch

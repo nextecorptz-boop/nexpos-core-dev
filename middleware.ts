@@ -26,8 +26,8 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  // Refresh session if exists
-  const { data: { session } } = await supabase.auth.getSession()
+  // Validate session server-side to prevent stale-JWT redirect loops
+  const { data: { user: authUser } } = await supabase.auth.getUser()
 
   const isAppRoute = request.nextUrl.pathname.startsWith('/app')
   const isSuspendedRoute = request.nextUrl.pathname === '/app/billing/suspended'
@@ -35,20 +35,20 @@ export async function middleware(request: NextRequest) {
 
   // Protect /app routes
   if (isAppRoute) {
-    if (!session) {
+    if (!authUser) {
       return NextResponse.redirect(new URL('/login', request.url))
     }
 
     // Enforce tenant suspension billing wall
     if (!isSuspendedRoute) {
-      let tenantId = session.user.app_metadata?.tenant_id
+      let tenantId = authUser.app_metadata?.tenant_id
       
       // Fallback: If not in JWT metadata yet, retrieve from user profile
       if (!tenantId) {
         const { data: profile } = await supabase
           .from('profiles')
           .select('tenant_id')
-          .eq('id', session.user.id)
+          .eq('id', authUser.id)
           .single()
         tenantId = profile?.tenant_id
       }
@@ -68,12 +68,12 @@ export async function middleware(request: NextRequest) {
   }
 
   // Redirect logged in users away from login
-  if (isLoginRoute && session) {
+  if (isLoginRoute && authUser) {
     // Get user profile to determine redirect
     const { data: profile } = await supabase
       .from('profiles')
       .select('role')
-      .eq('id', session.user.id)
+      .eq('id', authUser.id)
       .single()
 
     if (profile?.role === 'cashier') {

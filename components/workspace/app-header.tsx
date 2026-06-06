@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Wifi, WifiOff, Store, User, Bell } from 'lucide-react'
+import { Wifi, WifiOff, Store, User } from 'lucide-react'
 
 interface AppHeaderProps {
   user: {
@@ -67,7 +67,7 @@ export default function AppHeader({ user }: AppHeaderProps) {
           {t('Active Branch')}:
         </span>
         <span className="font-ui text-[13px] text-nx-text font-medium bg-nx-elevated px-2.5 py-1 rounded-nx-xs border border-nx-border">
-          {user.role === 'owner' ? t('HQ / All Branches') : (user.branch_id ? `Branch ID: ${user.branch_id.slice(0, 8)}` : 'N/A')}
+          {user.role === 'owner' ? t('HQ / All Branches') : (user.branch_id ? <>Branch ID: <span className="font-data text-nx-text-muted">{user.branch_id.slice(0, 8)}</span></> : 'N/A')}
         </span>
       </div>
 

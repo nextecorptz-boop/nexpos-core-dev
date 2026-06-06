@@ -5,19 +5,18 @@ import { ArrowLeft, Store } from 'lucide-react'
 import CatalogView from '@/components/public/catalog-view'
 import { Metadata } from 'next'
 
-interface Props {
-  params: {
-    slug: string
-  }
+type Props = {
+  params: Promise<{ slug: string }>
 }
 
 // Generate dynamic metadata for SEO
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params
   const supabase = (await createServiceClient()) as any
   const { data: tenant } = await supabase
     .from('tenants')
     .select('name, status')
-    .eq('slug', params.slug)
+    .eq('slug', slug)
     .maybeSingle()
 
   if (!tenant || tenant.status === 'suspended') {
@@ -34,13 +33,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function TenantCatalogPage({ params }: Props) {
+  const { slug } = await params
   const supabase = (await createServiceClient()) as any
 
   // 1. Fetch Tenant
   const { data: tenant } = await supabase
     .from('tenants')
     .select('*')
-    .eq('slug', params.slug)
+    .eq('slug', slug)
     .maybeSingle()
 
   // If tenant does not exist, return 404

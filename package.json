@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3000",
-    "dev:no-reload": "next dev --hostname 0.0.0.0 --port 3000",
-    "dev:webpack": "next dev --hostname 0.0.0.0 --port 3000",
-    "build": "next build",
+    "dev": "next dev --webpack -p 3000",
+    "dev:no-reload": "next dev --webpack --hostname 0.0.0.0 --port 3000",
+    "dev:webpack": "next dev --webpack -p 3000",
+    "build": "next build --webpack",
+    "build:webpack": "next build --webpack",
     "start": "next start",
     "circular-check": "madge --circular --extensions ts,tsx app lib components"
   },

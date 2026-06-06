@@ -1,5 +1,5 @@
-import { ComingSoonPlaceholder } from '@/components/workspace/ui/coming-soon-placeholder'
+import { ComingSoon } from '@/components/workspace/ui/nx/coming-soon'
 
 export default function CreditPage() {
-  return <ComingSoonPlaceholder moduleName="Customer Credit" />
+  return <ComingSoon moduleName="Credit" moduleSlug="credit" icon="credit-card" />
 }

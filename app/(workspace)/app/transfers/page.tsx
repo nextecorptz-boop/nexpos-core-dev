@@ -1,5 +1,5 @@
-import { ComingSoonPlaceholder } from '@/components/workspace/ui/coming-soon-placeholder'
+import { ComingSoon } from '@/components/workspace/ui/nx/coming-soon'
 
 export default function TransfersPage() {
-  return <ComingSoonPlaceholder moduleName="Transfers" />
+  return <ComingSoon moduleName="Transfers" moduleSlug="transfers" icon="arrow-right" />
 }
