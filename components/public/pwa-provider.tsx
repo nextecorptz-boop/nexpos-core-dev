@@ -21,30 +21,33 @@ export function PwaProvider({ children }: { children: React.ReactNode }) {
       }
     });
 
-    // 1. Register Service Worker manually
+    // 1. Register Service Worker manually (production only)
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker
-        .register('/sw.js')
-        .then((reg) => {
-          console.log('NEXPOS Service Worker registered with scope:', reg.scope)
-          setRegistration(reg)
+      if (process.env.NODE_ENV !== 'production') {
+        navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()))
+      } else {
+        navigator.serviceWorker
+          .register('/sw.js')
+          .then((reg) => {
+            console.log('NEXPOS Service Worker registered with scope:', reg.scope)
+            setRegistration(reg)
 
-          // Check for updates
-          reg.addEventListener('updatefound', () => {
-            const newWorker = reg.installing
-            if (newWorker) {
-              newWorker.addEventListener('statechange', () => {
-                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  // New update available, show notification
-                  setShowUpdateModal(true)
-                }
-              })
-            }
+            // Check for updates
+            reg.addEventListener('updatefound', () => {
+              const newWorker = reg.installing
+              if (newWorker) {
+                newWorker.addEventListener('statechange', () => {
+                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    setShowUpdateModal(true)
+                  }
+                })
+              }
+            })
           })
-        })
-        .catch((err) => {
-          console.error('Service worker registration failed:', err)
-        })
+          .catch((err) => {
+            console.error('Service worker registration failed:', err)
+          })
+      }
     }
 
     // 2. Listen for BeforeInstallPrompt event

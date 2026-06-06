@@ -116,6 +116,9 @@ module.exports = {
           ui: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
           data: ['JetBrains Mono', 'monospace'],
         },
+        boxShadow: {
+          'nx-md': '0 1px 3px rgba(0,0,0,0.45), 0 10px 28px rgba(0,0,0,0.35)',
+        },
     		keyframes: {
     			'accordion-down': {
     				from: {

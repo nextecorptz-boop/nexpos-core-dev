@@ -1,7 +1,7 @@
-import { ComingSoonPlaceholder } from '@/components/workspace/ui/coming-soon-placeholder'
+import { ComingSoon } from '@/components/workspace/ui/nx/coming-soon'
 
 export const dynamic = 'force-dynamic'
 
 export default function TillPage() {
-  return <ComingSoonPlaceholder moduleName="Till" />
+  return <ComingSoon moduleName="Till" moduleSlug="till" icon="receipt" />
 }

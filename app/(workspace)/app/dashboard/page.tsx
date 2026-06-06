@@ -3,7 +3,6 @@ import { createClient } from '@/lib/supabase/server'
 import {
   TrendingUp,
   DollarSign,
-  Package,
   Plus,
   ShoppingCart,
   Wallet,
@@ -83,6 +82,10 @@ export default async function DashboardPage() {
   // gracefully — the BannerRail returns null if no banners are eligible.
   const bannerSnapshot = await loadBannerSnapshot()
 
+  // Time-aware greeting
+  const hour = new Date().getHours()
+  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
+
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat('en-TZ', {
       style: 'currency',
@@ -97,7 +100,7 @@ export default async function DashboardPage() {
       <div className="flex items-center justify-between mb-8 pt-6 select-none">
         <div>
           <h1 className="font-ui text-[22px] font-bold text-nx-text leading-[1.3] mb-1">
-            Good morning, {user.full_name.split(' ')[0]}.
+            {greeting}, {user.full_name.split(' ')[0]}.
           </h1>
           <p className="text-nx-text-sec text-[12px]">
             {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
@@ -165,8 +168,8 @@ export default async function DashboardPage() {
             <h3 className="font-ui text-[14px] font-semibold text-nx-text">Sales Overview</h3>
             <div className="flex bg-nx-elevated rounded-nx-btn p-1">
               <button className="px-3 py-1 text-[11px] font-medium rounded-[6px] bg-nx-cyan text-white shadow-sm">Today</button>
-              <button className="px-3 py-1 text-[11px] font-medium rounded-[6px] text-nx-text-sec hover:text-nx-text transition-colors">Week</button>
-              <button className="px-3 py-1 text-[11px] font-medium rounded-[6px] text-nx-text-sec hover:text-nx-text transition-colors">Month</button>
+              <button disabled className="px-3 py-1 text-[11px] font-medium rounded-[6px] text-nx-text-sec opacity-50 cursor-not-allowed pointer-events-none">Week</button>
+              <button disabled className="px-3 py-1 text-[11px] font-medium rounded-[6px] text-nx-text-sec opacity-50 cursor-not-allowed pointer-events-none">Month</button>
             </div>
           </div>
           <div className="flex-1 min-h-[250px]">
@@ -183,26 +186,13 @@ export default async function DashboardPage() {
         </div>
 
         {/* Top Products Panel */}
-        <div className="bg-nx-surface border border-nx-border rounded-nx-card p-5 flex flex-col">
+        <div className="bg-nx-surface border border-nx-border rounded-nx-card p-5 flex flex-col h-full">
           <h3 className="font-ui text-[14px] font-semibold text-nx-text mb-4">Top Products</h3>
-          <div className="flex-1 flex flex-col gap-4">
-            {[1, 2, 3, 4].map(i => (
-              <div key={i} className="flex items-center justify-between group">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-nx-xs bg-nx-elevated flex items-center justify-center group-hover:bg-nx-cyan/10 transition-colors">
-                    <Package className="w-4 h-4 text-nx-text-muted group-hover:text-nx-cyan transition-colors" />
-                  </div>
-                  <div>
-                    <p className="font-ui text-[13px] font-medium text-nx-text">Product {i}</p>
-                    <p className="font-ui text-[11px] text-nx-text-sec">NEXPOS Premium</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="font-data text-[12px] font-semibold text-nx-text">2{i}</p>
-                  <p className="font-ui text-[10px] text-nx-text-muted">sold</p>
-                </div>
-              </div>
-            ))}
+          <div className="flex-1 flex flex-col justify-center">
+            <div className="nx-empty">
+              <div className="nx-empty-title">No sales yet</div>
+              <div className="nx-empty-sub">Top products will appear here once sales are recorded.</div>
+            </div>
           </div>
         </div>
       </div>
