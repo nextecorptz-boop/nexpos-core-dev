@@ -86,63 +86,70 @@ export function PwaProvider({ children }: { children: React.ReactNode }) {
     <>
       {children}
 
-      {/* PWA Install Banner - Swahili + English */}
-      {showInstallBanner && (
-        <div className="fixed bottom-6 left-6 right-6 md:left-auto md:right-6 md:w-96 z-50 bg-white border border-cyan-100 shadow-2xl rounded-2xl p-4 flex flex-col gap-3 animate-in slide-in-from-bottom-5 duration-300">
-          <div className="flex items-start justify-between">
-            <div className="flex gap-3">
-              <div className="p-2 rounded-xl bg-cyan-50 text-cyan-600">
-                <Sparkles className="w-5 h-5" />
+      {/* PWA Install Banner — NEXPOS dark design, language-aware */}
+      {showInstallBanner && (() => {
+        const isSw = typeof window !== 'undefined' && localStorage.getItem('nx-lang') === 'sw'
+        const copy = isSw
+          ? {
+              title: 'Sakinisha NEXPOS',
+              body: 'Sakinisha app kwa ufikiaji wa haraka na matumizi yaliyo tayari nje ya mtandao.',
+              btn: 'Sakinisha Sasa',
+            }
+          : {
+              title: 'Install NEXPOS',
+              body: 'Install the app for faster access and offline-ready workflows.',
+              btn: 'Install Now',
+            }
+        return (
+          <div className="fixed bottom-6 left-4 right-4 md:left-auto md:right-6 md:w-[360px] z-50 bg-[#121512] border border-[#262B25] shadow-2xl rounded-[12px] p-4 flex flex-col gap-3 animate-in slide-in-from-bottom-5 duration-300">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex gap-3 items-start">
+                <div className="p-2 rounded-[8px] bg-[#25C26E]/10 text-[#25C26E] flex-shrink-0">
+                  <Download className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="font-ui font-semibold text-[#F1F4EF] text-[14px] leading-snug">{copy.title}</h4>
+                  <p className="font-ui text-[12px] text-[#A3AA9F] mt-0.5 leading-relaxed">{copy.body}</p>
+                </div>
               </div>
-              <div>
-                <h4 className="font-semibold text-gray-900 text-sm">Sakinisha NEXPOS</h4>
-                <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
-                  Sakinisha App kwa utendaji wa haraka na matumizi ya nje ya mtandao (offline).
-                </p>
-                <p className="text-[10px] text-cyan-600 font-medium mt-1">
-                  Install app for offline capabilities & speed.
-                </p>
-              </div>
+              <button
+                onClick={() => setShowInstallBanner(false)}
+                aria-label="Dismiss install banner"
+                className="text-[#727A6E] hover:text-[#F1F4EF] transition-colors p-1 flex-shrink-0 -mt-0.5"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
             <button
-              onClick={() => setShowInstallBanner(false)}
-              className="text-gray-400 hover:text-gray-600 transition-colors p-0.5"
+              onClick={handleInstallClick}
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-[#25C26E] hover:bg-[#1fa85e] text-[#04210F] rounded-[8px] text-[13px] font-ui font-semibold transition-all active:scale-[0.98]"
             >
-              <X className="w-4 h-4" />
+              <Download className="w-4 h-4" />
+              {copy.btn}
             </button>
           </div>
-          <button
-            onClick={handleInstallClick}
-            className="w-full flex items-center justify-center gap-2 py-2 px-4 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl text-xs font-semibold shadow-sm transition-all"
-          >
-            <Download className="w-4 h-4" />
-            Sakinisha Sasa (Install Now)
-          </button>
-        </div>
-      )}
+        )
+      })()}
 
       {/* Forced Update Modal - SemVer Protection */}
       {showUpdateModal && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl border border-cyan-100 max-w-md w-full p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#121512] rounded-[12px] border border-[#262B25] max-w-md w-full p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
             <div className="flex flex-col items-center text-center gap-4">
-              <div className="p-3 bg-cyan-50 text-cyan-600 rounded-full animate-spin duration-1000">
-                <RefreshCw className="w-8 h-8" />
+              <div className="p-3 bg-[#25C26E]/10 text-[#25C26E] rounded-full">
+                <RefreshCw className="w-8 h-8 animate-spin" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-gray-900">Maboresho Mapya Yapo Tayari</h3>
-                <p className="text-sm text-gray-500 mt-2 leading-relaxed">
-                  Toleo jipya la mfumo limepakuliwa. Unatakiwa kusasisha sasa ili kuzuia hitilafu za mfumo.
-                </p>
-                <p className="text-xs text-cyan-600 font-medium mt-1 leading-relaxed">
-                  A system update is ready. You must reload to apply improvements and maintain sync compatibility.
+                <h3 className="font-ui text-[16px] font-bold text-[#F1F4EF]">System Update Ready</h3>
+                <p className="font-ui text-[13px] text-[#A3AA9F] mt-2 leading-relaxed">
+                  A new version has been downloaded. Reload now to apply improvements and maintain sync compatibility.
                 </p>
               </div>
               <button
                 onClick={handleUpdateClick}
-                className="w-full py-2.5 px-4 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl text-sm font-semibold shadow-md transition-all mt-2"
+                className="w-full py-2.5 px-4 bg-[#25C26E] hover:bg-[#1fa85e] text-[#04210F] rounded-[8px] font-ui text-[13px] font-semibold transition-all active:scale-[0.98] mt-2"
               >
-                Bonyeza Kusasisha (Update Now)
+                Update Now
               </button>
             </div>
           </div>

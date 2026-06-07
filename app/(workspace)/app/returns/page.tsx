@@ -15,16 +15,17 @@ function fmt(val: number): string {
 }
 
 export default async function ReturnsPage({ searchParams }: Props) {
-  await requireRole(['owner', 'manager'])
+  await requireRole(['owner', 'manager', 'cashier'])
   const { receipt } = await searchParams
 
   const supabase = await createClient()
 
   let sale: any = null
   let notFound = false
+  let accessError = false
 
   if (receipt?.trim()) {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('sales')
       .select(
         `id, receipt_number, completed_at, total, subtotal, vat_amount,
@@ -39,8 +40,12 @@ export default async function ReturnsPage({ searchParams }: Props) {
       .eq('status', 'completed')
       .maybeSingle()
 
-    sale = data
-    notFound = !data
+    if (error) {
+      accessError = true
+    } else {
+      sale = data
+      notFound = !data
+    }
   }
 
   return (
@@ -100,6 +105,19 @@ export default async function ReturnsPage({ searchParams }: Props) {
           )}
         </form>
       </div>
+
+      {/* Access error — RLS or query failure */}
+      {accessError && (
+        <div className="bg-nx-surface border border-nx-amber/20 rounded-nx-card px-5 py-8 flex flex-col items-center gap-2 mb-6 select-none">
+          <RotateCcw className="w-8 h-8 text-nx-text-faint" />
+          <p className="font-ui text-[14px] font-semibold text-nx-text-sec">
+            No matching receipt found or access restricted
+          </p>
+          <p className="text-[12px] text-nx-text-muted">
+            Check the receipt number and try again, or contact your manager.
+          </p>
+        </div>
+      )}
 
       {/* Not found */}
       {notFound && (

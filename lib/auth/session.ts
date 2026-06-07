@@ -57,7 +57,7 @@ export async function requireRole(allowedRoles: UserRole[]) {
   const user = await requireAuth()
   
   if (!allowedRoles.includes(user.role)) {
-    redirect('/app/dashboard')
+    redirect('/app/pos')
   }
 
   return user

@@ -50,6 +50,48 @@ export default function POSPage() {
   const [loading, setLoading] = useState(false)
   const [checkoutState, setCheckoutState] = useState<CheckoutState>('cart')
 
+  // Language state — reads nx-lang set by the workspace nav toggle
+  const [lang, setLang] = useState<'en' | 'sw'>('en')
+
+  useEffect(() => {
+    const stored = localStorage.getItem('nx-lang') as 'en' | 'sw' | null
+    if (stored === 'sw') setLang('sw')
+    const handleLangChange = () => {
+      const updated = localStorage.getItem('nx-lang') as 'en' | 'sw' | null
+      setLang(updated === 'sw' ? 'sw' : 'en')
+    }
+    window.addEventListener('nx-lang-change', handleLangChange)
+    return () => window.removeEventListener('nx-lang-change', handleLangChange)
+  }, [])
+
+  // Convenience translator for POS copy
+  const pos = {
+    title:       lang === 'sw' ? 'Kituo cha Mauzo' : 'Point of Sale',
+    sessionActive: lang === 'sw' ? 'Inayofanya kazi' : 'Active',
+    sessionNone:   lang === 'sw' ? 'Hakuna Zamu' : 'No active shift',
+    online:      lang === 'sw' ? 'Mtandao Upo (Online)' : 'Online',
+    offline:     lang === 'sw' ? 'Nje ya Mtandao (Offline)' : 'Offline',
+    loading:     lang === 'sw' ? 'Kupakia bidhaa...' : 'Loading products...',
+    noProducts:  lang === 'sw' ? 'Hakuna bidhaa iliyopatikana.' : 'No products found.',
+    searchPlaceholder: lang === 'sw' ? 'Tafuta bidhaa kwa jina au SKU...' : 'Search item, SKU, barcode, or service…',
+    stockOut:    (max: number) =>
+      lang === 'sw'
+        ? `Bidhaa imekwisha! Unaweza kuongeza hadi ${max} pekee.`
+        : `Out of stock — maximum ${max} available.`,
+    overStock:   (max: number) =>
+      lang === 'sw'
+        ? `Huwezi kuongeza zaidi ya kiwango cha akiba (${max} available)`
+        : `Cannot exceed available stock (${max} units).`,
+    paySuccess:  (receipt: string) =>
+      lang === 'sw'
+        ? `Malipo yamepokelewa! Stakabadhi: ${receipt}`
+        : `Payment received! Receipt: ${receipt}`,
+    payFail:     lang === 'sw' ? 'Malipo yameshindwa kuhifadhiwa' : 'Payment could not be saved.',
+    loadFail:    lang === 'sw'
+      ? 'Imeshindwa kupakia orodha ya bidhaa (Failed loading catalog)'
+      : 'Failed to load product catalog.',
+  }
+
   // Listen to online status
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -194,7 +236,7 @@ export default function POSPage() {
       }
     } catch (e) {
       console.error('Failed to load POS catalog data', e)
-      toast.error('Imeshindwa kupakia orodha ya bidhaa (Failed loading catalog)')
+      toast.error(pos.loadFail)
     } finally {
       setLoading(false)
     }
@@ -227,7 +269,7 @@ export default function POSPage() {
 
     // 2. Prevent adding if stock would go negative
     if (currentQtyInCart + 1 > available) {
-      toast.error(`Bidhaa imekwisha! Unaweza kuongeza hadi pea ${available} pekee.`)
+      toast.error(pos.stockOut(available))
       return
     }
 
@@ -258,7 +300,7 @@ export default function POSPage() {
       if (item.variant_id === variantId) {
         const newQty = item.quantity + delta
         if (newQty > item.max_available) {
-          toast.error(`Huwezi kuongeza zaidi ya kiwango cha akiba (${item.max_available} available)`)
+          toast.error(pos.overStock(item.max_available))
           return item
         }
         return { ...item, quantity: Math.max(1, newQty) }
@@ -298,11 +340,11 @@ export default function POSPage() {
       // Add to sync queue for offline operation using the canonical RPC
       await addToSyncQueue('sale', salePayload, activeTenantId)
 
-      toast.success(`Malipo yamepokelewa! Stakabadhi: ${generatedReceipt}`)
+      toast.success(pos.paySuccess(generatedReceipt))
       setCheckoutState('success')
     } catch (error: any) {
       console.error('Checkout error:', error)
-      toast.error('Malipo yameshindwa kuhifadhiwa')
+      toast.error(pos.payFail)
     } finally {
       setLoading(false)
     }
@@ -320,18 +362,18 @@ export default function POSPage() {
       {/* 1. Session Bar with Sync observations */}
       <div className="h-[48px] bg-nx-surface border-b border-nx-border px-6 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-2 font-ui text-[13px] text-nx-text-sec">
-          <span className="font-semibold text-nx-text">Point of Sale (Duka)</span>
+          <span className="font-semibold text-nx-text">{pos.title}</span>
           <span>•</span>
-          <span>Shift session: {cashSessionId ? 'Inayofanya kazi' : 'Hakuna Zamu'}</span>
+          <span>Shift session: {cashSessionId ? pos.sessionActive : pos.sessionNone}</span>
         </div>
         <div className="flex items-center gap-2">
           {isOnline ? (
             <span className="flex items-center gap-1.5 font-ui text-xs text-nx-green font-semibold bg-nx-green/10 px-2.5 py-1 rounded-full">
-              <Wifi className="w-3.5 h-3.5" /> Mtandao Upo (Online)
+              <Wifi className="w-3.5 h-3.5" /> {pos.online}
             </span>
           ) : (
-            <span className="flex items-center gap-1.5 font-ui text-xs text-nx-orange font-semibold bg-nx-orange/10 px-2.5 py-1 rounded-full">
-              <WifiOff className="w-3.5 h-3.5" /> Nje ya Mtandao (Offline)
+            <span className="flex items-center gap-1.5 font-ui text-xs text-nx-amber font-semibold bg-nx-amber/10 px-2.5 py-1 rounded-full">
+              <WifiOff className="w-3.5 h-3.5" /> {pos.offline}
             </span>
           )}
         </div>
@@ -355,7 +397,7 @@ export default function POSPage() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Tafuta bidhaa kwa jina au SKU..."
+                placeholder={pos.searchPlaceholder}
                 className="w-full bg-nx-surface border border-nx-border text-nx-text font-ui text-[14px] pl-10 pr-4 py-3 rounded-nx-btn focus:outline-none focus:border-nx-cyan transition-colors"
               />
             </div>
@@ -364,7 +406,7 @@ export default function POSPage() {
             <div className="flex-1 overflow-y-auto no-scrollbar pb-6">
               {loading && allProducts.length === 0 ? (
                 <div className="h-full flex items-center justify-center text-nx-text-muted font-ui text-[14px] animate-pulse">
-                  Kupakia bidhaa...
+                  {pos.loading}
                 </div>
               ) : (
                 <div className="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -381,7 +423,7 @@ export default function POSPage() {
               
               {!loading && displayedProducts.length === 0 && (
                 <div className="h-full flex items-center justify-center text-nx-text-muted font-ui text-[14px]">
-                  Hakuna bidhaa iliyopatikana.
+                  {pos.noProducts}
                 </div>
               )}
             </div>

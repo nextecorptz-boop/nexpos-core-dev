@@ -5,8 +5,8 @@ import { cookies } from 'next/headers';
 import { I18nProvider, type Language } from "@/lib/i18n/i18n-provider";
 
 export const metadata: Metadata = {
-  title: "NEXPOS - Premium Footwear in Tanzania",
-  description: "Discover quality footwear for men, women, and children at NEXPOS. Multiple locations across Tanzania.",
+  title: "NEXPOS — Enterprise Retail Operating System for Tanzania",
+  description: "NEXPOS: Multi-branch inventory, offline-first POS, and automated reconciliation built for Tanzanian retail operations.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,

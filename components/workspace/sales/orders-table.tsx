@@ -374,7 +374,7 @@ export function OrdersTable({
                         <div key={item.id} className="px-4 py-3 grid grid-cols-[1fr_80px_100px] items-center text-[13px]">
                           <div className="min-w-0 pr-2">
                             <p className="font-medium text-nx-text truncate">
-                              {item.variant?.family?.name || 'Standard Shoe'}
+                              {item.variant?.family?.name || 'Item'}
                             </p>
                             <p className="text-[11px] text-nx-text-sec flex gap-1">
                               {item.variant?.size && <span>Size: {item.variant.size}</span>}

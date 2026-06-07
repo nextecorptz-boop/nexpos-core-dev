@@ -162,8 +162,16 @@ export default function WorkspaceNav({ user }: { user: any }) {
   ]
 
 
+  const homeHref = user.role === 'cashier' ? '/app/pos' : '/app/dashboard'
+
   const filterByRole = (items: NavItem[]) => items.filter(item => item.roles.includes(user.role))
 
+  const headerGroup: NavItem[] = [
+    { name: 'Dashboard', href: '/app/dashboard', icon: LayoutDashboard, roles: ['owner', 'manager'] },
+    { name: 'Control Center', href: '/app/control-center', icon: Activity, roles: ['owner', 'manager'] },
+  ]
+
+  const activeHeaderItems = filterByRole(headerGroup)
   const activeSellItems = filterByRole(sellGroup)
   const activeManageItems = filterByRole(manageGroup)
   const activeAnalyzeItems = filterByRole(analyzeGroup)
@@ -200,7 +208,7 @@ export default function WorkspaceNav({ user }: { user: any }) {
     <>
       {/* Mobile Top Header (only visible on mobile/tablet screen widths) */}
       <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-nx-surface border-b border-nx-border z-30 flex items-center justify-between px-6">
-        <Link href="/app/dashboard" className="font-ui text-xl font-bold tracking-wider text-nx-text">
+        <Link href={homeHref} className="font-ui text-xl font-bold tracking-wider text-nx-text">
           NEX<span className="text-nx-cyan">POS</span>
         </Link>
         <button
@@ -222,11 +230,11 @@ export default function WorkspaceNav({ user }: { user: any }) {
           {/* Brand Logo Zone */}
           <div className="p-4 border-b border-nx-border h-16 flex items-center justify-between">
             {(!isCollapsed || mobileMenuOpen) ? (
-              <Link href="/app/dashboard" className="font-ui text-xl font-extrabold tracking-wider text-nx-text select-none">
+              <Link href={homeHref} className="font-ui text-xl font-extrabold tracking-wider text-nx-text select-none">
                 NEX<span className="text-nx-cyan">POS</span>
               </Link>
             ) : (
-              <Link href="/app/dashboard" className="font-ui text-lg font-black text-nx-cyan select-none mx-auto">
+              <Link href={homeHref} className="font-ui text-lg font-black text-nx-cyan select-none mx-auto">
                 NX
               </Link>
             )}
@@ -242,11 +250,12 @@ export default function WorkspaceNav({ user }: { user: any }) {
 
           {/* Scrollable Navigation links */}
           <div className="flex-1 overflow-y-auto py-4 no-scrollbar space-y-5 px-3">
-            {/* Top Dashboard Link */}
-            <div className="space-y-1">
-              {renderLink({ name: 'Dashboard', href: '/app/dashboard', icon: LayoutDashboard, roles: ['owner', 'manager'] })}
-              {renderLink({ name: 'Control Center', href: '/app/control-center', icon: Activity, roles: ['owner', 'manager'] })}
-            </div>
+            {/* Top Dashboard + Control Center — owner/manager only */}
+            {activeHeaderItems.length > 0 && (
+              <div className="space-y-1">
+                {activeHeaderItems.map(renderLink)}
+              </div>
+            )}
 
             {/* SELL GROUP */}
             {activeSellItems.length > 0 && (

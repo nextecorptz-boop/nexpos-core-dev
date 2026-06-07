@@ -1,6 +1,7 @@
 const nextConfig = {
   output: 'standalone',
-  turbopack: {},
+  // NOTE: turbopack removed — project always uses --webpack (Turbopack causes
+  // Compaction failed crashes on this codebase. Never re-enable.)
   images: {
     unoptimized: true,
   },
@@ -18,9 +19,11 @@ const nextConfig = {
     }
     return config;
   },
+  // Keep pages/chunks warm longer so the dev server doesn't evict and
+  // attempt a concurrent re-compile that produces empty JSON manifests.
   onDemandEntries: {
-    maxInactiveAge: 10000,
-    pagesBufferLength: 2,
+    maxInactiveAge: 60 * 1000, // 60 seconds (was 10s — too aggressive)
+    pagesBufferLength: 5,       // keep 5 pages in memory (was 2)
   },
   async headers() {
     return [

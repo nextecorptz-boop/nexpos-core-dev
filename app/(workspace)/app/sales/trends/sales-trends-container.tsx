@@ -502,7 +502,7 @@ export function SalesTrendsContainer({ initialSales, initialSaleItems }: SalesTr
         <div className="bg-nx-surface border border-nx-border rounded-nx-card p-5 flex flex-col h-[380px]">
           <div className="mb-4">
             <h3 className="text-[14px] font-semibold text-nx-text uppercase tracking-wider">Category Analytics</h3>
-            <p className="text-[11px] text-nx-text-muted mt-0.5">Top-selling footwear lines</p>
+            <p className="text-[11px] text-nx-text-muted mt-0.5">Top-selling product lines</p>
           </div>
           
           <div className="flex-1 overflow-y-auto space-y-3 pr-1">
