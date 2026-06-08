@@ -1,53 +1,51 @@
 // =============================================================================
-// G1.1 — Till close math unit test
+// G1.2 — Till close math unit test
 // Run: npx vitest run tests/till-close-math.test.ts
 //
 // Pure unit coverage for the close math used by the close_till_session RPC
-// and mirrored in lib/actions/till.ts (computeG1_1Close).
-//
-// Database-bound assertions (open-session uniqueness, cross-tenant RLS) are
-// documented as manual SQL steps in the implementation report — they require
-// a live Supabase instance and live in tests/concurrency/ with the other
-// integration tests.
+// and mirrored in lib/actions/till-math.ts.
 // =============================================================================
 
 import { describe, it, expect } from 'vitest'
-import { computeG1_1Close } from '../lib/actions/till-math'
+import { computeTillClose } from '../lib/actions/till-math'
 
-describe('G1.1 till close math', () => {
-  it('zero unreconciled difference closes the session', () => {
-    const r = computeG1_1Close(100_000, 100_000)
-    expect(r.expectedCash).toBe(100_000)
+describe('G1.2 till close math', () => {
+  it('zero variance closes the session cleanly', () => {
+    // 100k float + 50k cash sales = 150k expected. Counted 150k.
+    const r = computeTillClose(100_000, 50_000, 150_000)
+    expect(r.expectedCash).toBe(150_000)
     expect(r.variance).toBe(0)
     expect(r.status).toBe('closed')
   })
 
-  it('positive unreconciled difference forces disputed', () => {
-    const r = computeG1_1Close(100_000, 120_000)
-    expect(r.expectedCash).toBe(100_000)
-    expect(r.variance).toBe(20_000)
+  it('positive variance forces disputed', () => {
+    // 100k float + 50k cash sales = 150k expected. Counted 160k (+10k).
+    const r = computeTillClose(100_000, 50_000, 160_000)
+    expect(r.expectedCash).toBe(150_000)
+    expect(r.variance).toBe(10_000)
     expect(r.status).toBe('disputed')
   })
 
-  it('negative unreconciled difference forces disputed', () => {
-    const r = computeG1_1Close(100_000, 80_000)
-    expect(r.expectedCash).toBe(100_000)
-    expect(r.variance).toBe(-20_000)
+  it('negative variance forces disputed', () => {
+    // 100k float + 50k cash sales = 150k expected. Counted 140k (-10k).
+    const r = computeTillClose(100_000, 50_000, 140_000)
+    expect(r.expectedCash).toBe(150_000)
+    expect(r.variance).toBe(-10_000)
     expect(r.status).toBe('disputed')
   })
 
   it('zero opening float and zero count closes cleanly', () => {
-    const r = computeG1_1Close(0, 0)
+    const r = computeTillClose(0, 0, 0)
     expect(r.expectedCash).toBe(0)
     expect(r.variance).toBe(0)
     expect(r.status).toBe('closed')
   })
 
-  it('G1.1 expected_cash never includes fabricated cash sales', () => {
-    // Asserting the invariant: expected_cash MUST equal opening_float in G1.1.
-    // If this ever fails, cash-sale linkage has leaked in early and G1.2
-    // labelling / migration comments must be revisited.
-    const r = computeG1_1Close(250_000, 999_999)
-    expect(r.expectedCash).toBe(250_000)
+  it('G1.2 expected_cash includes cash sales', () => {
+    // Asserting the invariant: expected_cash MUST equal opening_float + cash_sales in G1.2.
+    const r = computeTillClose(250_000, 150_000, 400_000)
+    expect(r.expectedCash).toBe(400_000)
+    expect(r.variance).toBe(0)
+    expect(r.status).toBe('closed')
   })
 })

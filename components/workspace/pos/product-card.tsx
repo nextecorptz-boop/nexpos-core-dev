@@ -22,7 +22,7 @@ export function ProductCard({ product, isSelected, onClick }: ProductCardProps) 
   const stockState = totalStock > 5 ? 'green' : totalStock > 0 ? 'orange' : 'red'
   
   // Get base price from first variant or fallback to 0
-  const displayPrice = product.variants?.[0]?.selling_price || product.variants?.[0]?.price || 0
+  const displayPrice = product.variants?.[0]?.selling_price || product.variants?.[0]?.sell_price || 0
 
   return (
     <button

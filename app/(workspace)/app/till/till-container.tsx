@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useTransition, useMemo } from 'react'
+import React, { useState, useTransition, useMemo, useEffect } from 'react'
 import {
   AlertTriangle,
   CheckCircle2,
@@ -9,7 +9,14 @@ import {
   ShieldCheck,
   LockKeyhole,
 } from 'lucide-react'
-import { openTill, closeTill, reviewTillSession, type TillSession } from '@/lib/actions/till'
+import {
+  openTill,
+  closeTill,
+  reviewTillSession,
+  getPendingCashSummary,
+  type TillSession,
+  type PendingCashSummary,
+} from '@/lib/actions/till'
 
 type Me = {
   id: string
@@ -65,6 +72,7 @@ export function TillContainer({
   const [reviewNotesById, setReviewNotesById] = useState<Record<string, string>>({})
   const [error, setError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
+  const [pendingSummary, setPendingSummary] = useState<PendingCashSummary | null>(null)
 
   // canOpen: privileged users need a branch selected; cashiers need an assigned branch
   const canOpen = isPrivileged
@@ -75,6 +83,23 @@ export function TillContainer({
     () => sessions.find((s) => s.status === 'open' && s.cashier_id === me.id) ?? null,
     [sessions, me.id]
   )
+
+  useEffect(() => {
+    if (!myOpenSession) return
+    let active = true
+    const fetchSummary = async () => {
+      const res = await getPendingCashSummary(myOpenSession.id)
+      if (active && res.ok) {
+        setPendingSummary(res.data)
+      }
+    }
+    fetchSummary()
+    const interval = setInterval(fetchSummary, 5000)
+    return () => {
+      active = false
+      clearInterval(interval)
+    }
+  }, [myOpenSession])
 
   const reviewQueue = useMemo(
     () =>
@@ -183,21 +208,7 @@ export function TillContainer({
         </div>
       </div>
 
-      {/* G1.1 limitation banner */}
-      <div className="flex items-start gap-3 bg-nx-amber/5 border border-nx-amber/20 rounded-nx-card px-5 py-4">
-        <AlertTriangle className="w-5 h-5 text-nx-amber flex-shrink-0 mt-0.5" />
-        <div className="space-y-1">
-          <p className="font-ui text-[13px] font-semibold text-nx-amber">
-            Opening Float Only
-          </p>
-          <p className="text-[12px] text-nx-text-muted leading-relaxed">
-            Cash sale linkage activates in G1.2. Until then, expected cash equals the
-            opening float and any non-zero difference at close is an{' '}
-            <span className="font-semibold text-nx-text-sec">Unreconciled Difference</span>,
-            not final drawer variance.
-          </p>
-        </div>
-      </div>
+      {/* Removed G1.1 limitation banner */}
 
       {error && (
         <div className="flex items-start gap-3 bg-nx-red/10 border border-nx-red/30 rounded-nx-card px-4 py-3">
@@ -212,6 +223,7 @@ export function TillContainer({
           {myOpenSession ? (
             <OpenSessionPanel
               session={myOpenSession}
+              pendingSummary={pendingSummary}
               counted={counted}
               onCounted={setCounted}
               closeNotes={closeNotes}
@@ -246,8 +258,7 @@ export function TillContainer({
                 </span>
               </div>
               <p className="text-[12px] text-nx-text-muted leading-relaxed">
-                G1.1 compares counted cash against opening float only. Accepting closes the
-                session as reviewed; reopen lands in G1.2.
+                Accepting closes the session as reviewed.
               </p>
               <ul className="divide-y divide-nx-border/50">
                 {reviewQueue.map((s) => (
@@ -310,19 +321,17 @@ export function TillContainer({
           </div>
           <div className="space-y-3 text-[12.5px] leading-relaxed text-nx-text-sec">
             <p>
-              In G1.1, expected cash is the opening float and variance is the unreconciled
-              difference between counted cash and that float.
+              Expected cash is calculated dynamically from the opening float and all cash sales linked to this till session.
             </p>
             <div className="p-3 bg-nx-elevated/40 border border-nx-border/50 rounded-nx-card text-[11.5px] font-mono space-y-1">
-              <p className="font-bold text-nx-text">Close math (G1.1)</p>
-              <p>expected_cash = opening_float</p>
+              <p className="font-bold text-nx-text">Close math (G1.2)</p>
+              <p>expected_cash = opening_float + cash_sales</p>
               <p>variance = counted − expected_cash</p>
               <p className="text-nx-amber">
                 variance ≠ 0 → status = disputed (review required)
               </p>
             </div>
             <p className="text-[11.5px] italic">
-              This is not final drawer variance until cash sales are linked in G1.2.
               All open / close / review events are written to the audit log.
             </p>
           </div>
@@ -465,6 +474,7 @@ function OpenTillForm({
 
 function OpenSessionPanel({
   session,
+  pendingSummary,
   counted,
   onCounted,
   closeNotes,
@@ -473,6 +483,7 @@ function OpenSessionPanel({
   isPending,
 }: {
   session: TillSession
+  pendingSummary: PendingCashSummary | null
   counted: string
   onCounted: (v: string) => void
   closeNotes: string
@@ -481,8 +492,10 @@ function OpenSessionPanel({
   isPending: boolean
 }) {
   const opening = Number(session.opening_float)
+  const cashSales = pendingSummary ? Number(pendingSummary.cash_sales_total) : 0
+  const expected = pendingSummary ? Number(pendingSummary.expected_cash) : opening
   const counted_n = counted === '' ? null : Number(counted)
-  const previewDiff = counted_n === null || Number.isNaN(counted_n) ? null : counted_n - opening
+  const previewDiff = counted_n === null || Number.isNaN(counted_n) ? null : counted_n - expected
 
   return (
     <div className="bg-nx-surface border border-nx-border rounded-nx-card p-5 space-y-6">
@@ -500,15 +513,16 @@ function OpenSessionPanel({
       </div>
 
       {/* Balances */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
         <Stat label="Opening Float" value={tzs(opening)} />
         <Stat
-          label="Opening Float Only"
-          value={tzs(opening)}
-          hint="Cash sale linkage activates in G1.2."
+          label="Cash Sales"
+          value={tzs(cashSales)}
+          hint={pendingSummary ? `${pendingSummary.transaction_count} transaction(s)` : 'Loading...'}
         />
+        <Stat label="Expected Cash" value={tzs(expected)} />
         <Stat
-          label="Unreconciled Difference (preview)"
+          label="Variance (Preview)"
           value={previewDiff === null ? '—' : tzs(previewDiff)}
           tone={
             previewDiff === null || previewDiff === 0
@@ -517,7 +531,7 @@ function OpenSessionPanel({
                 ? 'amber'
                 : 'red'
           }
-          hint="G1.1 compares counted cash against opening float only."
+          hint="Difference between counted and expected cash."
         />
       </div>
 
