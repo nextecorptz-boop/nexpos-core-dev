@@ -34,7 +34,7 @@ export function VariantPanel({ product, isOpen, onClose, onSelectVariant }: Vari
               {product.name}
             </p>
             <p className="font-data text-[13px] font-bold text-nx-cyan mb-6">
-              {new Intl.NumberFormat('en-TZ', { style: 'currency', currency: 'TZS', minimumFractionDigits: 0 }).format(product.variants?.[0]?.selling_price || product.variants?.[0]?.price || 0)}
+              {new Intl.NumberFormat('en-TZ', { style: 'currency', currency: 'TZS', minimumFractionDigits: 0 }).format(product.variants?.[0]?.selling_price || product.variants?.[0]?.sell_price || 0)}
             </p>
 
             <div className="grid grid-cols-3 gap-3">

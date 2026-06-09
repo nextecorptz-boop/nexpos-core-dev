@@ -357,9 +357,18 @@ async function processItems(supabase: any, items: QueueItem[], tier: 0 | 1 | 2 |
 
     } catch (err: any) {
       errorCount++
-      console.error(`Error replaying event ${item.id}:`, err)
+      console.error(`Error replaying event ${item.id}:`, {
+        message: err?.message,
+        code: err?.code,
+        details: err?.details,
+        hint: err?.hint,
+        status: err?.status,
+        name: err?.name,
+        stack: err?.stack,
+        raw: err
+      })
 
-      const isClientSideError = err.status === 400 || err.status === 403 || err.status === 409 || err.code === '23502' || err.code === '23503' || err.code === '23514'
+      const isClientSideError = err.status === 400 || err.status === 403 || err.status === 409 || err.code === '23502' || err.code === '23503' || err.code === '23514' || err.code === '22023'
       if (isClientSideError) {
         await Telemetry.error('sync', `Event ${event.id} quarantined due to server validation failure: ${err.message}`)
         await quarantineMutation(item.id, tier, err.message || 'Validation/RLS Failure')

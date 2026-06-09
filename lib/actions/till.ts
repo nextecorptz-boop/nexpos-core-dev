@@ -1,10 +1,9 @@
 'use server'
 
 /**
- * Till Session server actions — Phase G1.1
+ * Till Session server actions — Phase G1.2
  *
- * G1.1 limitation: expected_cash = opening_float; variance is an unreconciled
- * difference, not a true drawer variance. UI must label clearly.
+ * G1.2: expected_cash dynamically calculates as opening_float + cash_sales.
  *
  * All mutations go through SECURITY DEFINER RPCs defined in
  *   supabase/migrations/20260101000018_till_sessions.sql
@@ -232,3 +231,33 @@ export async function reviewTillSession(
   return { ok: true, data: data as TillSession }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// getPendingCashSummary
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type PendingCashSummary = {
+  opening_float: number
+  cash_sales_total: number
+  expected_cash: number
+  transaction_count: number
+}
+
+export async function getPendingCashSummary(
+  sessionId: string
+): Promise<ActionResult<PendingCashSummary>> {
+  if (!sessionId) {
+    return { ok: false, code: 'VALIDATION_ERROR', message: 'session_id is required' }
+  }
+
+  const supabase = await createClient()
+
+  const { data, error } = await supabase.rpc('pending_cash_summary', {
+    p_session_id: sessionId,
+  })
+
+  if (error) {
+    return { ok: false, ...mapRpcError(error) }
+  }
+
+  return { ok: true, data: data as PendingCashSummary }
+}

@@ -215,7 +215,7 @@ export default function POSPage() {
               id: v.id,
               size: v.size,
               color: v.color,
-              selling_price: v.price,
+              selling_price: v.sell_price,
               cost_price: v.cost_price,
               current_qty: v.quantity,
               reserved_qty: 0,
@@ -286,7 +286,7 @@ export default function POSPage() {
         size: variant.size,
         color: variant.color,
         quantity: 1,
-        unit_price: variant.selling_price || variant.price || 0,
+        unit_price: variant.selling_price || variant.sell_price || 0,
         cost_price: variant.cost_price || 0,
         max_available: available
       }])
@@ -317,6 +317,11 @@ export default function POSPage() {
 
   // Checkout Execution: Queueing the sale mutation to the offline sync engine
   const handleProcessPayment = async (method: string, amountTendered: number) => {
+    if (!activeBranchId || activeBranchId === 'HQ' || activeBranchId === 'all') {
+      toast.error('You must select a concrete branch to complete sales.')
+      return
+    }
+
     setLoading(true)
     try {
       const generatedReceipt = `${branchPrefix}-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`
@@ -327,7 +332,7 @@ export default function POSPage() {
         branch_id: activeBranchId,
         customer_id: null,
         payment_method: method,
-        payment_meta: { amount_tendered: amountTendered },
+        payment_meta: { amount_tendered: amountTendered, cash_amount: amountTendered },
         discount_amount: 0,
         lines: cart.map(item => ({
           variant_id: item.variant_id,
